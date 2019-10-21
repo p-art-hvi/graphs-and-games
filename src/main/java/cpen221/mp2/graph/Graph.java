@@ -8,6 +8,10 @@ import java.util.*;
  * @param <V> represents a vertex type
  */
 public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>, IGraph<V, E> {
+    //we are going to use an adjacency list to represent a graph...
+    private Map<Vertex, Edge<Vertex>> graph = new HashMap<>();
+    private Vertex vertex = new Vertex(0, null);
+    private Edge<Vertex> edge = new Edge<>(this.vertex, this.vertex);
     /**
      * Add a vertex to the graph
      *
@@ -16,7 +20,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public boolean addVertex(V v) {
-        return false;
+        this.vertex = v;
+        this.graph.putIfAbsent(this.vertex, this.edge);
+        return vertex(v);
     }
     /**
      * Check if a vertex is part of the graph
@@ -26,8 +32,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public boolean vertex(V v) {
-        return false;
-    }
+        this.vertex = v;
+        return this.graph.containsKey(this.vertex); }
 
     /**
      * Add an edge of the graph
@@ -37,17 +43,27 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public boolean addEdge(E e) {
-        return false;
+        Vertex v1 = e.v1();
+        Vertex v2 = e.v2();
+        this.edge = new Edge<>(v1, v2);
+
+        this.graph.putIfAbsent(v1, this.edge);
+        this.graph.putIfAbsent(v2, this.edge);
+
+        return edge(e);
     }
     /**
      * Check if an edge is part of the graph
      *
      * @param e the edge to check in the graph
-     * @return true if e is an edge in the graoh and false otherwise
+     * @return true if e is an edge in the graph and false otherwise
      */
     @Override
     public boolean edge(E e) {
-        return false;
+        Vertex v1 = e.v1();
+        Vertex v2 = e.v2();
+        this.edge = new Edge<>(v1, v2);
+        return this.graph.containsValue(this.edge);
     }
 
     /**
@@ -60,7 +76,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
     @Override
     public boolean edge(V v1, V v2) {
-        return false;
+        this.edge = new Edge<>(v1, v2);
+        return this.graph.containsValue(this.edge);
     }
 
     /**
@@ -72,6 +89,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public int edgeLength(V v1, V v2) {
+        if(edge(v1, v2)){
+            return this.edge.length();
+        }
         return 0;
     }
 
