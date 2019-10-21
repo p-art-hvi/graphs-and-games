@@ -9,9 +9,9 @@ import java.util.*;
  */
 public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>, IGraph<V, E> {
     //we are going to use an adjacency list to represent a graph...
-    private Map<Vertex, Edge<Vertex>> graph = new HashMap<>();
+    private Map<Vertex, List<Vertex>> graph = new HashMap<>();
     private Vertex vertex = new Vertex(0, null);
-    private Edge<Vertex> edge = new Edge<>(this.vertex, this.vertex);
+    private List<Vertex> vertexList = new ArrayList<>();
     /**
      * Add a vertex to the graph
      *
@@ -21,7 +21,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public boolean addVertex(V v) {
         this.vertex = v;
-        this.graph.putIfAbsent(this.vertex, this.edge);
+        this.graph.putIfAbsent(this.vertex, this.vertexList);
         return vertex(v);
     }
     /**
@@ -45,11 +45,10 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public boolean addEdge(E e) {
         Vertex v1 = e.v1();
         Vertex v2 = e.v2();
-        this.edge = new Edge<>(v1, v2);
-
-        this.graph.putIfAbsent(v1, this.edge);
-        this.graph.putIfAbsent(v2, this.edge);
-
+        this.vertexList.add(v2);
+        this.graph.putIfAbsent(v1,this.vertexList);
+        this.vertexList.add(v1);
+        this.graph.putIfAbsent(v2,this.vertexList);
         return edge(e);
     }
     /**
@@ -62,8 +61,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public boolean edge(E e) {
         Vertex v1 = e.v1();
         Vertex v2 = e.v2();
-        this.edge = new Edge<>(v1, v2);
-        return this.graph.containsValue(this.edge);
+        return this.graph.get(v1).contains(v2);
     }
 
     /**
@@ -76,8 +74,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
     @Override
     public boolean edge(V v1, V v2) {
-        this.edge = new Edge<>(v1, v2);
-        return this.graph.containsValue(this.edge);
+        return this.graph.get(v1).contains(v2);
     }
 
     /**
