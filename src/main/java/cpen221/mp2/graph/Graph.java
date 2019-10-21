@@ -86,8 +86,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public int edgeLength(V v1, V v2) {
+        Edge<Vertex> edge1 = new Edge<>(v1, v2);
         if(edge(v1, v2)){
-            return this.edge.length();
+            return edge1.length();
         }
         return 0;
     }
@@ -101,12 +102,20 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public int edgeLengthSum() {
 
         int totalLength = 0;
-
-        for (Edge<Vertex> edge: graph) {
+        int length = this.graph.size();
+/*
+        for (int i = 0; i < length; i++) {
+            List<Vertex> list = this.graph.get(i);
+            for(int j = 0; j < list.size(); j++) {
+                Edge<Vertex> edge1 = new Edge<>(i, )
+                totalLength =
+            }
            totalLength += edgeLength(edge.v1(), edge.v2());
         }
-
-        return totalLength;
+*/
+        this.graph.
+        for (Vertex vertex: this.graph)
+        return totalLength/2;
     }
     /**
      * Remove an edge from the graph
