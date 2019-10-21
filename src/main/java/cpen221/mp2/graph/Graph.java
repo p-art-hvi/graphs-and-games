@@ -102,7 +102,14 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public int edgeLengthSum() {
-        return 0;
+
+        int totalLength = 0;
+
+        for (Edge<Vertex> edge: graph) {
+           totalLength += edgeLength(edge.v1(), edge.v2());
+        }
+
+        return totalLength;
     }
     /**
      * Remove an edge from the graph
@@ -112,7 +119,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public boolean remove(E e) {
-        return false;
+
+        Vertex v1 = e.v1();
+        Vertex v2 = e.v2();
+        this.edge = new Edge<>(v1, v2);
+        this.graph.remove(this.edge);
+        return !edge(e);
     }
     /**
      * Remove a vertex from the graph
@@ -122,7 +134,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public boolean remove(V v) {
-        return false;
+
+        this.graph.remove(v);
+        return !vertex(v);
     }
     /**
      * Obtain a set of all vertices in the graph.
@@ -132,7 +146,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public Set<V> allVertices() {
-        return null;
+        Set<V> vertices = new HashSet<V>;
+        vertices = graph.keySet();
+        return vertices;
     }
     /**
      * Obtain a set of all vertices incident on v.
@@ -153,7 +169,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public Set<E> allEdges() {
-        return null;
+
+        Set<V> edges = new HashSet<V>;
+        edges = graph.ValueSet();
+        return edges;
+
     }
 
     /**
