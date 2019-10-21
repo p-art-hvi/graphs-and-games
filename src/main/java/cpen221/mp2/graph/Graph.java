@@ -9,9 +9,9 @@ import java.util.*;
  */
 public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>, IGraph<V, E> {
     //we are going to use an adjacency list to represent a graph...
-    private Map<Vertex, List<Vertex>> graph = new HashMap<>();
-    private Vertex vertex = new Vertex(0, null);
-    private List<Vertex> vertexList = new ArrayList<>();
+    private Map<V, List<V>> graph = new HashMap<>();
+    private V vertex;
+    private List<V> vertexList = new ArrayList<>();
     /**
      * Add a vertex to the graph
      *
@@ -43,8 +43,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public boolean addEdge(E e) {
-        Vertex v1 = e.v1();
-        Vertex v2 = e.v2();
+        V v1 = e.v1();
+        V v2 = e.v2();
         this.vertexList.add(v2);
         this.graph.putIfAbsent(v1,this.vertexList);
         this.vertexList.add(v1);
@@ -59,8 +59,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public boolean edge(E e) {
-        Vertex v1 = e.v1();
-        Vertex v2 = e.v2();
+        V v1 = e.v1();
+        V v2 = e.v2();
         return this.graph.get(v1).contains(v2);
     }
 
@@ -86,7 +86,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public int edgeLength(V v1, V v2) {
-        Edge<Vertex> edge1 = new Edge<>(v1, v2);
+        Edge<V> edge1 = new Edge<>(v1, v2);
         if(edge(v1, v2)){
             return edge1.length();
         }
@@ -113,8 +113,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
            totalLength += edgeLength(edge.v1(), edge.v2());
         }
 */
-        this.graph.
-        for (Vertex vertex: this.graph)
+        for (V vertex: this.graph.keySet()) {
+            List<V> list = this.graph.get(vertex);
+            for (V vertex2: list) {
+                totalLength += edgeLength(vertex, vertex2);
+            }
+        }
         return totalLength/2;
     }
     /**
@@ -152,7 +156,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public Set<V> allVertices() {
-        Set<V> vertices = new HashSet<V>;
+        Set<V> vertices = new HashSet<V>();
         vertices = graph.keySet();
         return vertices;
     }
