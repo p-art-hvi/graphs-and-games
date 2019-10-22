@@ -61,7 +61,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public boolean edge(E e) {
         V v1 = e.v1();
         V v2 = e.v2();
-        return this.graph.get(v1).contains(v2);
+        return this.graph.get(v1).contains(v2) && this.graph.get(v2).contains(v1);
     }
 
     /**
@@ -103,16 +103,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
         int totalLength = 0;
         int length = this.graph.size();
-/*
-        for (int i = 0; i < length; i++) {
-            List<Vertex> list = this.graph.get(i);
-            for(int j = 0; j < list.size(); j++) {
-                Edge<Vertex> edge1 = new Edge<>(i, )
-                totalLength =
-            }
-           totalLength += edgeLength(edge.v1(), edge.v2());
-        }
-*/
+
         for (V vertex: this.graph.keySet()) {
             List<V> list = this.graph.get(vertex);
             for (V vertex2: list) {
@@ -130,10 +121,10 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public boolean remove(E e) {
 
-        Vertex v1 = e.v1();
-        Vertex v2 = e.v2();
-        this.edge = new Edge<>(v1, v2);
-        this.graph.remove(this.edge);
+        V v1 = e.v1();
+        V v2 = e.v2();
+        this.graph.get(v1).remove(v2);
+        this.graph.get(v2).remove(v1);
         return !edge(e);
     }
     /**
@@ -180,8 +171,15 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public Set<E> allEdges() {
 
-        Set<V> edges = new HashSet<V>;
-        edges = graph.ValueSet();
+        Set<E> edges = new HashSet<V>;
+        Edge<V> edge1;
+        for (V vertex: this.graph.keySet()) {
+            List<V> list = this.graph.get(vertex);
+            for (V vertex2: list) {
+                edge1 = new Edge(vertex, vertex2);
+                edges.add(edge1);
+            }
+        }
         return edges;
 
     }
