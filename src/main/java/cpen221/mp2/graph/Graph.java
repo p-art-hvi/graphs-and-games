@@ -11,6 +11,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     //we are going to use an adjacency list to represent a graph...
     private Map<V, List<V>> graph = new HashMap<>();
     private V vertex;
+    private E edge;
     private List<V> vertexList = new ArrayList<>();
     /**
      * Add a vertex to the graph
@@ -100,19 +101,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public int edgeLengthSum() {
-
         int totalLength = 0;
-        int length = this.graph.size();
-/*
-        for (int i = 0; i < length; i++) {
-            List<Vertex> list = this.graph.get(i);
-            for(int j = 0; j < list.size(); j++) {
-                Edge<Vertex> edge1 = new Edge<>(i, )
-                totalLength =
-            }
-           totalLength += edgeLength(edge.v1(), edge.v2());
-        }
-*/
         for (V vertex: this.graph.keySet()) {
             List<V> list = this.graph.get(vertex);
             for (V vertex2: list) {
@@ -166,10 +155,26 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @param v the vertex of interest
      * @return all edges incident on v
+     * Two edges are called incident if they both share a vertex
      */
     @Override
     public Set<E> allEdges(V v) {
-        return null;
+        //check all edges in this.graph for vertex v:
+        Set<E> edges = new HashSet<>();
+        for(V vertex: this.graph.keySet()){
+            List<V> list = this.graph.get(vertex);
+            for(V vertex2: list){
+                //need to implement getEdge for this to work...
+                this.edge = this.getEdge(v, vertex2);
+                if(this.edge != null){
+                    if(this.edge.incident(v)){
+                        edges.add(this.edge);
+                    }
+                }
+            }
+        }
+
+        return edges;
     }
     /**
      * Obtain a set of all edges in the graph.
@@ -263,7 +268,21 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public E getEdge(V v1, V v2) {
-        return null;
+        Edge<V> vEdge;
+        if(this.graph.containsKey(v1)){
+            for(V v: this.graph.get(v1)){
+                if(v == v2){
+                    vEdge = new Edge<V>(v1, v2);
+                }
+            }
+        } else if(this.graph.containsKey(v2)){
+            for(V v: this.graph.get(v2)){
+                if(v == v1){
+                    vEdge = new Edge<V>(v2, v1);
+                }
+            }
+        }
+        return vEdge;
     }
 
     //// add all new code above this line ////
