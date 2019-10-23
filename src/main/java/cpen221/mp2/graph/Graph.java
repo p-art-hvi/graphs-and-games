@@ -8,9 +8,7 @@ import java.util.*;
  * @param <V> represents a vertex type
  */
 public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>, IGraph<V, E> {
-    //we are going to use an adjacency list to represent a graph...
     private Map<V, List<V>> graph = new HashMap<>();
-    private V vertex;
     private List<E> edgeList = new ArrayList<>();
     private List<V> vertexList = new ArrayList<>();
     /**
@@ -21,8 +19,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public boolean addVertex(V v) {
-        this.vertex = v;
-        this.graph.putIfAbsent(this.vertex, this.vertexList);
+        this.graph.putIfAbsent(v, this.vertexList);
         return vertex(v);
     }
     /**
@@ -32,9 +29,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return true of v is part of the graph and false otherwise
      */
     @Override
-    public boolean vertex(V v) {
-        this.vertex = v;
-        return this.graph.containsKey(this.vertex); }
+    public boolean vertex(V v) { return this.graph.containsKey(v); }
 
     /**
      * Add an edge of the graph
@@ -104,20 +99,10 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public int edgeLengthSum() {
         int totalLength = 0;
-
         for(E e: this.edgeList){
             totalLength += e.length();
         }
         return totalLength;
-        /*
-        for (V vertex: this.graph.keySet()) {
-            List<V> list = this.graph.get(vertex);
-            for (V vertex2: list) {
-                totalLength += edgeLength(vertex, vertex2);
-            }
-        }
-        return totalLength/2;
-         */
     }
     /**
      * Remove an edge from the graph
