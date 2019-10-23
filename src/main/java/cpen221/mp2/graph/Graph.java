@@ -217,8 +217,97 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public List<E> minimumSpanningTree() {
+        Set<V> allVertices = allVertices();
+        int length = allVertices.size();
+        Set<V> verticesIncluded = new HashSet<>();
+        int count = 0;
+        Boolean master[] = new Boolean [length];
+        Map <V, E> neighbours = new HashMap<>();
+        V vertex1 = null;
+        V vertex2 = null;
+        List<E> order = new ArrayList<>();
+        E edge = null;
+
+        Map<V, Integer> map = new HashMap<>();
+
+        for (V vertex: allVertices) {
+            map.put(vertex, Integer.MAX_VALUE);
+            count++;
+            if (count == 1) {
+                map.put(vertex, 0);
+                vertex2 = vertex;
+            }
+        }
+
+        while (verticesIncluded.size() != length) {
+            vertex1 = vertex2;
+            for (int i = 0; i < length - 1; i++) {
+                Integer min = minKey(map, master);
+                master[min] = true;
+
+                for (int j = 0; j < length; j++) {
+                    if (map.get(j) == min) {
+                        vertex2 = getKey(map, min);
+                        verticesIncluded.add(vertex1);
+                    }
+                }
+
+                neighbours = getNeighbours(vertex1);
+
+                for (V vertex: allVertices) {
+                    if (neighbours.containsKey(vertex)) {
+                        int weight = neighbours.get(vertex).length();
+                        if (weight < map.get(vertex)) {
+                            map.put(vertex, weight);
+                        }
+                    }
+                }
+            }
+            // edge = edge(vertex1, vertex2) //i know this is wrong but how do i construct an edge?
+            order.add(edge);
+        }
+
+        return order;
+    }
+
+    /** TODO write specs
+     *
+     * @param map
+     * @param value
+     * @param <V>
+     * @param <Integer>
+     * @return
+     */
+    public <V, Integer> V getKey(Map<V, Integer> map, Integer value) {
+        for (Map.Entry<V, Integer> entry: map.entrySet()) {
+            if (entry.getValue().equals(value)) {
+                return entry.getKey();
+            }
+        }
         return null;
     }
+    //used https://www.baeldung.com/java-map-key-from-value
+
+    /** TODO write specs
+     *
+     * @param map
+     * @param master
+     * @return
+     */
+    public int minKey(Map<V, Integer> map, Boolean master[]) {
+        int min = Integer.MAX_VALUE;
+        int index = -1;
+
+        for (int i = 0; i < allVertices().size(); i++) {
+            if (master[i] == false && map.get(i) < min) {
+                min = map.get(i);
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    //used https://www.geeksforgeeks.org/prims-minimum-spanning-tree-mst-greedy-algo-5/
     /**
      * Compute the length of a given path
      *
