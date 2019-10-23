@@ -11,7 +11,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     //we are going to use an adjacency list to represent a graph...
     private Map<V, List<V>> graph = new HashMap<>();
     private V vertex;
-    private E edge;
+    private List<E> edgeList = new ArrayList<>();
     private List<V> vertexList = new ArrayList<>();
     /**
      * Add a vertex to the graph
@@ -46,6 +46,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public boolean addEdge(E e) {
         V v1 = e.v1();
         V v2 = e.v2();
+        this.edgeList.add(e);
         this.vertexList.add(v2);
         this.graph.putIfAbsent(v1,this.vertexList);
         this.vertexList.add(v1);
@@ -62,7 +63,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public boolean edge(E e) {
         V v1 = e.v1();
         V v2 = e.v2();
-        return this.graph.get(v1).contains(v2) && this.graph.get(v2).contains(v1);
+        return this.graph.get(v1).contains(v2) && this.graph.get(v2).contains(v1) && this.edgeList.contains(e);
     }
 
     /**
@@ -87,9 +88,10 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public int edgeLength(V v1, V v2) {
-        Edge<V> edge1 = new Edge<>(v1, v2);
-        if(edge(v1, v2)){
-            return edge1.length();
+        for(E edge1: this.edgeList){
+            if(edge1.v1() == v1 && edge1.v2() == v2){
+                return edge1.length();
+            }
         }
         return 0;
     }
@@ -102,7 +104,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public int edgeLengthSum() {
         int totalLength = 0;
-        int length = this.graph.size();
+
+        for(E e: this.edgeList){
+            totalLength += e.length();
+        }
+        return totalLength;
+        /*
         for (V vertex: this.graph.keySet()) {
             List<V> list = this.graph.get(vertex);
             for (V vertex2: list) {
@@ -110,6 +117,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             }
         }
         return totalLength/2;
+         */
     }
     /**
      * Remove an edge from the graph
@@ -119,12 +127,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public boolean remove(E e) {
-
         V v1 = e.v1();
         V v2 = e.v2();
         this.graph.get(v1).remove(v2);
         this.graph.get(v2).remove(v1);
-        return !edge(e);
+        this.edgeList.remove(e);
+        return (!this.graph.get(v1).contains(v2) && !this.graph.get(v2).contains(v1) && !this.edgeList.contains(e));
     }
     /**
      * Remove a vertex from the graph
@@ -134,9 +142,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public boolean remove(V v) {
-
         this.graph.remove(v);
-        return !vertex(v);
+        return !this.graph.containsKey(v);
     }
     /**
      * Obtain a set of all vertices in the graph.
@@ -145,11 +152,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a set of all vertices in the graph
      */
     @Override
-    public Set<V> allVertices() {
-        Set<V> vertices = new HashSet<V>();
-        vertices = graph.keySet();
-        return vertices;
-    }
+    public Set<V> allVertices() { return this.graph.keySet(); }
     /**
      * Obtain a set of all vertices incident on v.
      * Access to this set **should not** permit graph mutations.
@@ -160,22 +163,14 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public Set<E> allEdges(V v) {
-        //check all edges in this.graph for vertex v:
-        Set<E> edges = new HashSet<>();
-        for(V vertex: this.graph.keySet()){
-            List<V> list = this.graph.get(vertex);
-            for(V vertex2: list){
-                //need to implement getEdge for this to work...
-                this.edge = this.getEdge(v, vertex2);
-                if(this.edge != null){
-                    if(this.edge.incident(v)){
-                        edges.add(this.edge);
-                    }
-                }
+        Set<E> incidentEdges = new HashSet<E>();
+        Set<E> allEdges = new HashSet<E>(allEdges());
+        for(E edge: allEdges){
+            if(edge.incident(v)){
+                incidentEdges.add(edge);
             }
         }
-
-        return edges;
+        return incidentEdges;
     }
     /**
      * Obtain a set of all edges in the graph.
@@ -184,20 +179,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return all edges in the graph
      */
     @Override
-    public Set<E> allEdges() {
-
-        Set<E> edges = new HashSet<V>;
-        Edge<V> edge1;
-        for (V vertex: this.graph.keySet()) {
-            List<V> list = this.graph.get(vertex);
-            for (V vertex2: list) {
-                edge1 = new Edge(vertex, vertex2);
-                edges.add(edge1);
-            }
-        }
-        return edges;
-
-    }
+    public Set<E> allEdges(){ return new HashSet<E>(this.edgeList); }
 
     /**
      * Obtain all the neighbours of vertex v.
@@ -208,7 +190,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public Map<V, E> getNeighbours(V v) {
-        return null;
+        Map<V, E> neighbourMap = new HashMap<V, E>();
+        List<V> vList = this.graph.get(v);
+        for(V v2: vList){
+            E e = getEdge(v, v2);
+            neighbourMap.put(v2, e);
+        }
+        return neighbourMap;
     }
     /**
      * Compute the shortest path from source to sink
@@ -276,21 +264,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public E getEdge(V v1, V v2) {
-        Edge<V> vEdge;
-        if(this.graph.containsKey(v1)){
-            for(V v: this.graph.get(v1)){
-                if(v == v2){
-                    vEdge = new Edge<V>(v1, v2);
-                }
-            }
-        } else if(this.graph.containsKey(v2)){
-            for(V v: this.graph.get(v2)){
-                if(v == v1){
-                    vEdge = new Edge<V>(v2, v1);
-                }
+        E edge2 = null;
+        for(E edge1: this.edgeList){
+            if((edge1.v1() == v1 && edge1.v2() == v2) || (edge1.v1() == v2 && edge1.v2() == v1)){
+                edge2 = edge1;
             }
         }
-        return vEdge;
+        return edge2;
     }
 
     //// add all new code above this line ////
