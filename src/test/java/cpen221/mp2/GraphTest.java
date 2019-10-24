@@ -5,20 +5,20 @@ import cpen221.mp2.graph.Graph;
 import cpen221.mp2.graph.Vertex;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.*;
 
 public class GraphTest {
-    /**
-     * Adds a vertex and an edge to the existing graph and checks whether the graph contains the vertex and edge.
-     */
+
     @Test
     public void testSmallGraph(){
-        Vertex v1 = new Vertex(1, "neuron1");
-        Vertex v2 = new Vertex(2, "neuron2");
-        Vertex v3 = new Vertex(3, "neuron3");
+        Vertex v1 = new Vertex(1, "dendrites");
+        Vertex v2 = new Vertex(2, "axon terminal");
+        Vertex v3 = new Vertex(3, "synaptic cleft");
 
         Edge<Vertex> e1 = new Edge<>(v1, v2, 3);
         Edge<Vertex> e2 = new Edge<>(v2, v3, 4);
@@ -35,13 +35,10 @@ public class GraphTest {
         assertTrue(g.vertex(v3));
     }
 
-    /**
-     * Gets all of the vertices and edges for a graph
-     */
     @Test
     public void testVerticesAndEdges(){
-        Vertex v1 = new Vertex(6, "Carl");
-        Vertex v2 = new Vertex(8, "George");
+        Vertex v1 = new Vertex(6, "Othello");
+        Vertex v2 = new Vertex(8, "Hamlet");
         Vertex v3 = new Vertex(10, "Parthvi");
         Vertex v4 = new Vertex(19, "Laia");
 
@@ -86,9 +83,6 @@ public class GraphTest {
         assertEquals(vertexSet, g.allVertices());
     }
 
-    /**
-     * Gets all of the edges of a graph, checks edgeLength and edgeLengthSum
-     */
     @Test
     public void testEdgeAndRemoveMethods(){
         Vertex v1 = new Vertex(6, "Jorge");
@@ -161,6 +155,37 @@ public class GraphTest {
         Set<Edge<Vertex>> edgeSet = new HashSet<Edge<Vertex>>();
         assertEquals(0, g.edgeLengthSum());
         assertEquals(edgeSet, g.allEdges());
+    }
+
+    @Test
+    public void testGetNeighbours(){
+        Vertex v1 = new Vertex(1, "Joe Jonas");
+        Vertex v2 = new Vertex(2, "Kevin Jonas");
+        Vertex v3 = new Vertex(3, "Nick Jonas");
+        Vertex v4 = new Vertex(4, "Priyanka Chopra Jonas");
+
+        Edge<Vertex> e1 = new Edge<Vertex>(v1, v2, 5);
+        Edge<Vertex> e2 = new Edge<Vertex>(v1, v3, 7);
+        Edge<Vertex> e3 = new Edge<Vertex>(v1, v4, 9);
+        Edge<Vertex> e4 = new Edge<Vertex>(v2, v3, 19);
+        Edge<Vertex> e5 = new Edge<Vertex>(v2, v4, 27);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+        g.addEdge(e5);
+
+        Map<Vertex, Edge> map = new HashMap<Vertex, Edge>();
+        map.put(v2, e1);
+        map.put(v3, e2);
+        map.put(v4, e3);
+        assertEquals(map, g.getNeighbours(v1));
     }
     @Test
     public void testCreateGraph() {
