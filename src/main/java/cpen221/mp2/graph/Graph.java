@@ -43,9 +43,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         V v2 = e.v2();
         this.edgeList.add(e);
         this.vertexList.add(v2);
-        this.graph.putIfAbsent(v1,this.vertexList);
+        this.graph.put(v1,this.vertexList);
         this.vertexList.add(v1);
-        this.graph.putIfAbsent(v2,this.vertexList);
+        this.graph.put(v2,this.vertexList);
         return edge(e);
     }
     /**
@@ -177,9 +177,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public Map<V, E> getNeighbours(V v) {
         Map<V, E> neighbourMap = new HashMap<V, E>();
         List<V> vList = this.graph.get(v);
+        vList.remove(v);
         for(V v2: vList){
             E e = getEdge(v, v2);
-            neighbourMap.put(v2, e);
+            if(e != null){
+                neighbourMap.put(v2, e);
+            }
         }
         return neighbourMap;
     }
