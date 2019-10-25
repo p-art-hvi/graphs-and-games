@@ -5,10 +5,7 @@ import cpen221.mp2.graph.Graph;
 import cpen221.mp2.graph.Vertex;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -209,6 +206,41 @@ public class GraphTest {
 
         assertEquals(e2, g.getEdge(v2, v3));
         //assertEquals(21, g.pathLength(shortestPath(v3, v4)));
+    }
+
+    @Test
+    public void testBasicMSP() {
+        Vertex v1 = new Vertex(1, "A");
+        Vertex v2 = new Vertex(2, "B");
+        Vertex v3 = new Vertex(3, "C");
+        Vertex v4 = new Vertex(4, "D");
+        Vertex v5 = new Vertex(5, "E");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 5);
+        Edge<Vertex> e2 = new Edge<>(v2, v3, 7);
+        Edge<Vertex> e3 = new Edge<>(v1, v4, 9);
+        Edge<Vertex> e4 = new Edge<>(v4, v5, 10);
+        Edge<Vertex> e5 = new Edge<>(v3, v5, 20);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+        g.addEdge(e5);
+        g.addVertex(v5);
+
+        List<Edge> expected = new ArrayList<Edge>();
+        expected.add(e1);
+        expected.add(e2);
+        expected.add(e3);
+        expected.add(e4);
+
+        assertEquals(expected, g.minimumSpanningTree());
     }
 
 }

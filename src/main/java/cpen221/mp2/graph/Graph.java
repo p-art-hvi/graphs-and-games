@@ -206,7 +206,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         int length = allVertices.size();
         Set<V> verticesIncluded = new HashSet<>();
         int count = 0;
-        Boolean master[] = new Boolean [length];
+        boolean master[] = new boolean [length];
         Map <V, E> neighbours = new HashMap<>();
         V vertex1 = null;
         V vertex2 = null;
@@ -214,6 +214,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         E edge = null;
 
         Map<V, Integer> map = new HashMap<>();
+
+        for (int i = 0; i < length; i++) {
+            master[i] = false;
+        }
+
 
         for (V vertex: allVertices) {
             map.put(vertex, Integer.MAX_VALUE);
@@ -227,11 +232,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         while (verticesIncluded.size() != length) {
             vertex1 = vertex2;
             for (int i = 0; i < length - 1; i++) {
-                Integer min = minKey(map, master);
+                Integer min = minKey(map, master, allVertices);
                 master[min] = true;
 
-                for (int j = 0; j < length; j++) {
-                    if (map.get(j) == min) {
+                for (V vertex: allVertices) {
+                    if (map.get(vertex) == min) {
                         vertex2 = getKey(map, min);
                         verticesIncluded.add(vertex1);
                     }
@@ -248,7 +253,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
                     }
                 }
             }
-            // edge = edge(vertex1, vertex2) //i know this is wrong but how do i construct an edge?
+            edge = getEdge(vertex1, vertex2);
             order.add(edge);
         }
 
@@ -257,13 +262,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
     /** TODO write specs
      *
-     * @param map
-     * @param value
-     * @param <V>
-     * @param <Integer>
-     * @return
+     * @param map map of all vertices and their weight associated to them.  All except one key-value
+     *            pair begin with the value MAX_Integer, and this value changes as more vertices are added
+     *            to the MSP.
+     * @param value value of key being searched for
+     * @return the vertex which matches the value being searched for
      */
-    public <V, Integer> V getKey(Map<V, Integer> map, Integer value) {
+    public V getKey(Map<V, Integer> map, Integer value) {
         for (Map.Entry<V, Integer> entry: map.entrySet()) {
             if (entry.getValue().equals(value)) {
                 return entry.getKey();
@@ -275,19 +280,24 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
     /** TODO write specs
      *
-     * @param map
-     * @param master
-     * @return
+     * @param map map of all vertices and their weight associated to them.  All except one key-value
+     *        pair begin with the value MAX_Integer, and this value changes as more vertices are added
+     *        to the MSP.
+     * @param master represents which vertices are contained in the current MSP
+     * @param allVertices contains all vertices in the map being searched
+     * @return value of next-closest vertex
      */
-    public int minKey(Map<V, Integer> map, Boolean master[]) {
+    public int minKey(Map<V, Integer> map, boolean master[], Set<V> allVertices) {
         int min = Integer.MAX_VALUE;
         int index = -1;
+        int i = 0;
 
-        for (int i = 0; i < allVertices().size(); i++) {
-            if (master[i] == false && map.get(i) < min) {
-                min = map.get(i);
+        for (V vertex: allVertices) {
+            if (!master[i] && map.get(vertex) < min) {
+                min = map.get(vertex);
                 index = i;
             }
+            i++;
         }
         return index;
     }
