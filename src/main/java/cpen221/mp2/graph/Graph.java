@@ -8,6 +8,21 @@ import java.util.*;
  * @param <V> represents a vertex type
  */
 public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>, IGraph<V, E> {
+    /*
+    Rep Invariant:
+    -- each map pairing contains a vertex which is on the graph and a list
+    of vertices which it shares edges with
+    -- each vertex in the graph must be added with addVertex()
+    -- each edge in the graph must be added with addEdge()
+    -- each edge must correspond to two vertices on the graph
+    -- all vertices must have at least one edge connecting them to the graph
+
+    Abstraction Function:
+    -- graph maps all vertices on a graph to a list of vertices
+    they attach to (have edges with)
+    -- edgeList represents a list containing all edges in the given map
+    -- vertexList represents a list containing all vertices in a given map
+     */
     private Map<V, List<V>> graph = new HashMap<>();
     private List<E> edgeList = new ArrayList<>();
     private List<V> vertexList = new ArrayList<>();
