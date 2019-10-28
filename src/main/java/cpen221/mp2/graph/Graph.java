@@ -281,8 +281,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     }
     //used https://www.baeldung.com/java-map-key-from-value
 
-    /** TODO write specs
-     *
+    /**
      * @param map map of all vertices and their weight associated to them.  All except one key-value
      *        pair begin with the value MAX_Integer, and this value changes as more vertices are added
      *        to the MSP.
