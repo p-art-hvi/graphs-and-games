@@ -361,9 +361,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             nodeSet = neighbourMap.keySet();
 
             for (V vertex : visited) {
-                if (nodeSet.contains(vertex)){
-                    nodeSet.remove(vertex);
-                }
+                nodeSet.remove(vertex);
             }
             if(!nodeSet.isEmpty()){
                 for (V vertex: nodeSet){
