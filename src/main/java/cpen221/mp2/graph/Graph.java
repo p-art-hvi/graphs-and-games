@@ -328,7 +328,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public int pathLength(List<V> path) {
-        return 0;
+        int length = 0;
+        E edge;
+        for(int i = 0; i < path.size(); i++){
+            edge = getEdge(path.get(i), path.get(i + 1));
+            length += edge.length();
+        }
+        return length;
     }
     /**
      * Obtain all vertices w that are no more than a <em>path distance</em> of range from v.
@@ -339,7 +345,41 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public Set<V> search(V v, int range) {
-        return null;
+       Set<V> vSet = new HashSet<>(this.vertexList);
+       Set<V> visited = new HashSet<>();
+
+       Map<V, E> neighbourMap;
+       Set<V> nodeSet;
+       int length = 0;
+       int tempPath;
+       int distance = 1000;
+       V u = v;
+
+        while(!(vSet.isEmpty()) && length <= range){
+            vSet.remove(u);
+            neighbourMap = getNeighbours(u);
+            nodeSet = neighbourMap.keySet();
+
+            for (V vertex : visited) {
+                if (nodeSet.contains(vertex)){
+                    nodeSet.remove(vertex);
+                }
+            }
+            if(!nodeSet.isEmpty()){
+                for (V vertex: nodeSet){
+                    E edge = neighbourMap.get(vertex);
+                    tempPath = length + edge.length();
+                    if(tempPath < distance){
+                        distance = tempPath;
+                        u = vertex;
+                    }
+                }
+            }
+            visited.add(u);
+            length = length + distance;
+        }
+
+        return visited;
     }
     /**
      * Compute the diameter of the graph.
@@ -361,7 +401,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @param v1 one end of the edge
      * @param v2 the other end of the edge
-     * @return the edge connecting v1 and v2
+     * @return the edge connecting v1 and v2 or return null
      */
     @Override
     public E getEdge(V v1, V v2) {
