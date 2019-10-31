@@ -391,7 +391,21 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public int diameter() {
-        return 0;
+        Set<V> vSet1 = allVertices();
+        Set<V> vSet2 = allVertices();
+        int length;
+        int longLength = 0;
+        List<V> shortList;
+        for(V v1: vSet1){
+            for(V v2: vSet2){
+                shortList = shortestPath(v1, v2);
+                length = pathLength(shortList);
+                if(length > longLength){
+                    longLength = length;
+                }
+            }
+        }
+        return longLength;
     }
     /**
      * Find the edge that connects two vertices if such an edge exists.
