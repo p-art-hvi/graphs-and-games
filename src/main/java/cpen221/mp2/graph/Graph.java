@@ -373,7 +373,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public int pathLength(List<V> path) {
         int length = 0;
         E edge;
-        for(int i = 0; i < path.size(); i++){
+        for(int i = 0; i < path.size() - 1; i++){
             edge = getEdge(path.get(i), path.get(i + 1));
             length += edge.length();
         }
