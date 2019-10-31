@@ -23,9 +23,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     -- edgeList represents a list containing all edges in the given map
     -- vertexList represents a list containing all vertices in a given map
      */
-    private Map<V, List<V>> graph = new HashMap<>();
+    private Map<V, Set<V>> graph = new HashMap<>();
     private List<E> edgeList = new ArrayList<>();
-    private List<V> vertexList = new ArrayList<>();
+    private Set<V> vertexList = new HashSet<>();
     /**
      * Add a vertex to the graph
      *
@@ -191,9 +191,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public Map<V, E> getNeighbours(V v) {
         Map<V, E> neighbourMap = new HashMap<V, E>();
-        List<V> vList = this.graph.get(v);
-        vList.remove(v);
-        for(V v2: vList){
+        Set<V> vSet = allVertices();
+        vSet.remove(v);
+        for(V v2: vSet){
             E e = getEdge(v, v2);
             if(e != null){
                 neighbourMap.put(v2, e);
@@ -254,7 +254,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
                 master[min] = true;
 
                 for (V vertex: allVertices) {
-                    if (map.get(vertex) == min) {
+                    if (map.get(vertex).equals(min)) {
                         vertex2 = getKey(map, min);
                         verticesIncluded.add(vertex1);
                     }
@@ -345,7 +345,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public Set<V> search(V v, int range) {
-       Set<V> vSet = new HashSet<>(this.vertexList);
+       Set<V> vSet = allVertices();
        Set<V> visited = new HashSet<>();
 
        Map<V, E> neighbourMap;
@@ -354,8 +354,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
        int tempPath;
        int distance = 1000;
        V u = v;
-
         while(!(vSet.isEmpty()) && length <= range){
+            length = 0;
             vSet.remove(u);
             neighbourMap = getNeighbours(u);
             nodeSet = neighbourMap.keySet();
@@ -372,9 +372,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
                         u = vertex;
                     }
                 }
+                visited.add(u);
+                length = length + distance;
             }
-            visited.add(u);
-            length = length + distance;
         }
 
         return visited;
