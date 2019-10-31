@@ -10,7 +10,6 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 public class GraphTest {
-
     @Test
     public void testSmallGraph(){
         Vertex v1 = new Vertex(1, "dendrites");
@@ -246,6 +245,43 @@ public class GraphTest {
         }
 
         assertEquals(expected, MSP);
+    }
+
+    @Test
+    public void testSearch(){
+        Vertex v1 = new Vertex(1, "Jake Peralta");
+        Vertex v2 = new Vertex(2, "Amy Santiago Peralta");
+        Vertex v3 = new Vertex(3, "Rosa Diaz");
+        Vertex v4 = new Vertex(4, "Doug Judy");
+        Vertex v5 = new Vertex(5, "Captain Raymond Holt");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 3);
+        Edge<Vertex> e2 = new Edge<>(v1, v3, 10);
+        Edge<Vertex> e3 = new Edge<>(v1, v4, 6);
+        Edge<Vertex> e4 = new Edge<>(v1, v5, 15);
+        Edge<Vertex> e5 = new Edge<>(v2, v3, 2);
+        Edge<Vertex> e6 = new Edge<>(v2, v4, 14);
+        Edge<Vertex> e7 = new Edge<>(v2, v5, 99);
+
+        Graph<Vertex, Edge<Vertex>> graph = new Graph<>();
+        graph.addVertex(v1);
+        graph.addVertex(v2);
+        graph.addVertex(v3);
+        graph.addVertex(v4);
+        graph.addVertex(v5);
+        graph.addEdge(e1);
+        graph.addEdge(e2);
+        graph.addEdge(e3);
+        graph.addEdge(e4);
+        graph.addEdge(e5);
+        graph.addEdge(e6);
+        graph.addEdge(e7);
+
+        Set<Vertex> vSet = new HashSet<>();
+        vSet.add(v2);
+        vSet.add(v3);
+        vSet.add(v4);
+        assertEquals(vSet, graph.search(v1, 6));
     }
 
 }
