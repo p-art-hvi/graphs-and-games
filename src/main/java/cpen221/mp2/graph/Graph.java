@@ -210,6 +210,37 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public List<V> shortestPath(V source, V sink) {
+        Set<E> allEdges = allEdges();
+        Set<V> allVertices = allVertices();
+        Set<V> verticesRemaining = allVertices();
+        Map<V, Integer> map = new HashMap<>();
+        Map<V, Boolean> maptf = new HashMap<>();
+        int size = allVertices.size();
+        int[] distance = new int[size];
+        Boolean[] included = new Boolean[size];
+        int count = 0;
+
+        for (V vertex: allVertices) {
+            map.put(vertex, Integer.MAX_VALUE);
+            maptf.put(vertex, false);
+            distance[count] = Integer.MAX_VALUE;
+            included[count] = false;
+        }
+
+        maptf.put(source, true);
+        map.put(source, 0);
+
+        for (int j = 0; j < size - 1; j++) {
+            E edge = minWeight(allEdges);
+            allEdges.remove(edge);
+            int u = minDistance(distance, included);
+            included[u] = true;
+            for (int k = 0; k < size; k++) {
+                if (!included[k] )
+            }
+
+        }
+
         return null;
     }
     /**
@@ -258,6 +289,19 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             }
         }
         return minEdge;
+    }
+
+    public int minDistance(int[] distance, Boolean[] included) {
+        int min = Integer.MAX_VALUE;
+        int index = -1;
+
+        for(int i = 0; i < distance.length; i++) {
+            if (included[i] == false && distance[i] <= min) {
+                min = distance[i];
+                index = i
+            }
+        }
+        return index;
     }
       /*  Set<V> allVertices = allVertices();
         int length = allVertices.size();
