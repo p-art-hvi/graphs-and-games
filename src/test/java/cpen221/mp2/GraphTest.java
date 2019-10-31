@@ -234,13 +234,18 @@ public class GraphTest {
         g.addEdge(e5);
         g.addVertex(v5);
 
-        List<Edge> expected = new ArrayList<Edge>();
+        Set<Edge> expected = new HashSet<>();
         expected.add(e1);
         expected.add(e2);
         expected.add(e3);
         expected.add(e4);
 
-        assertEquals(expected, g.minimumSpanningTree());
+        Set <Edge> MSP = new HashSet<>();
+        for (Edge e : g.minimumSpanningTree()) {
+            MSP.add(e);
+        }
+
+        assertEquals(expected, MSP);
     }
 
 }

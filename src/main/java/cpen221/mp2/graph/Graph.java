@@ -220,7 +220,46 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public List<E> minimumSpanningTree() {
+        Groups vertices = new Groups();
+        Set <E> edges = allEdges();
         Set<V> allVertices = allVertices();
+        List <E> MST = new ArrayList<>();
+        E edge = null;
+        V vertex1 = null;
+        V vertex2 = null;
+
+
+        for (V vertex : allVertices) {
+            vertices.add(vertex);
+        }
+
+       while( edges.size() != 0) {
+            edge = minWeight(edges);
+            edges.remove(edge);
+            vertex1 = edge.v1();
+            vertex2 = edge.v2();
+            if (vertices.find(vertex1) != vertices.find(vertex2)) {
+                MST.add(edge);
+                vertices.merge(vertex1, vertex2);
+            }
+
+        }
+
+        return MST;
+    }
+//** TODO: write specs
+    public E minWeight(Set<E> edges) {
+        int min = Integer.MAX_VALUE;
+        E minEdge = null;
+
+        for (E edge: edges) {
+            if (edge.length() < min) {
+                minEdge = edge;
+            }
+        }
+        return minEdge;
+    }
+      /*  Set<V> allVertices = allVertices();
         int length = allVertices.size();
         Set<V> verticesIncluded = new HashSet<>();
         int count = 0;
@@ -243,24 +282,25 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             count++;
             if (count == 1) {
                 map.put(vertex, 0);
-                vertex2 = vertex;
+                vertex1 = vertex;
             }
         }
 
         while (verticesIncluded.size() != length) {
-            vertex1 = vertex2;
-            for (int i = 0; i < length - 1; i++) {
-                Integer min = minKey(map, master, allVertices);
-                master[min] = true;
+            //for (int i = 0; i < length - 1; i++) {
+                int minVals [] = minKey(map, master, allVertices);
+                Integer min = minVals[1];
+                master[minVals[0]] = true;
+                vertex1 = getKey(map, min);
+
 
                 for (V vertex: allVertices) {
                     if (map.get(vertex) == min) {
                         vertex2 = getKey(map, min);
-                        verticesIncluded.add(vertex1);
+                        verticesIncluded.add(vertex2);
+                        neighbours = getNeighbours(vertex2);
                     }
                 }
-
-                neighbours = getNeighbours(vertex1);
 
                 for (V vertex: allVertices) {
                     if (neighbours.containsKey(vertex)) {
@@ -273,31 +313,29 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             }
             edge = getEdge(vertex1, vertex2);
             order.add(edge);
-        }
+       // }
 
         return order;
-    }
+    } */
 
-    /** TODO write specs
-     *
+    /**
      * @param map map of all vertices and their weight associated to them.  All except one key-value
      *            pair begin with the value MAX_Integer, and this value changes as more vertices are added
      *            to the MSP.
      * @param value value of key being searched for
      * @return the vertex which matches the value being searched for
      */
-    public V getKey(Map<V, Integer> map, Integer value) {
+    /*public V getKey(Map<V, Integer> map, Integer value) {
         for (Map.Entry<V, Integer> entry: map.entrySet()) {
             if (entry.getValue().equals(value)) {
                 return entry.getKey();
             }
         }
         return null;
-    }
+    } */
     //used https://www.baeldung.com/java-map-key-from-value
 
-    /** TODO write specs
-     *
+    /**
      * @param map map of all vertices and their weight associated to them.  All except one key-value
      *        pair begin with the value MAX_Integer, and this value changes as more vertices are added
      *        to the MSP.
@@ -305,10 +343,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param allVertices contains all vertices in the map being searched
      * @return value of next-closest vertex
      */
-    public int minKey(Map<V, Integer> map, boolean master[], Set<V> allVertices) {
+   /* public int [] minKey(Map<V, Integer> map, boolean master[], Set<V> allVertices) {
         int min = Integer.MAX_VALUE;
         int index = -1;
         int i = 0;
+        int [] values = {0,0};
 
         for (V vertex: allVertices) {
             if (!master[i] && map.get(vertex) < min) {
@@ -317,8 +356,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             }
             i++;
         }
-        return index;
-    }
+        values[0] = index;
+        values[1] = min;
+
+        return values;
+    } */
 
     //used https://www.geeksforgeeks.org/prims-minimum-spanning-tree-mst-greedy-algo-5/
     /**
