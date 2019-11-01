@@ -59,7 +59,7 @@ public interface ImGraph<V extends Vertex, E extends Edge<V>> {
      * @param v2 the other end of the edge
      * @return the edge connecting v1 and v2
      */
-    public E getEdge(V v1, V v2);
+    E getEdge(V v1, V v2);
 
 
 }
