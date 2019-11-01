@@ -25,7 +25,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     private Map<V, Set<V>> graph = new HashMap<>();
     private List<E> edgeList = new ArrayList<>();
-    private Set<V> vertexList = new HashSet<>();
+    private List<V> vertexList = new ArrayList<>();
+    private Set<V> settled;
+    private Set<V> unsettled;
+    private Map<V, V> predecessors;
+    private Map<V, Integer> distance;
+
     /**
      * Add a vertex to the graph
      *
@@ -210,8 +215,71 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public List<V> shortestPath(V source, V sink) {
-        return null;
+        distance = new HashMap<>();
+        settled = new HashSet<>();
+        unsettled = new HashSet<>();
+        predecessors = new HashMap<>();
+
+        distance.put(source, 0);
+        unsettled.add(source);
+
+        while (unsettled.size() > 0) {
+            V node = getMin(unsettled);
+            settled.add(node);
+            unsettled.remove(node);
+            minDistance(node);
+        }
+
+        LinkedList<V> path = new LinkedList<V>();
+        V target = sink;
+
+        if (predecessors.get(target) == null) {
+            return null;
+        }
+        path.add(target);
+        while (predecessors.get(target) != null) {
+            target = predecessors.get(target);
+            path.add(target);
+        }
+        Collections.reverse(path);
+        return path;
+
+      /*  Set<E> allEdges = allEdges();
+        Set<V> allVertices = allVertices();
+        Set<V> verticesRemaining = allVertices();
+        Map<V, Integer> map = new HashMap<>();
+        Map<V, Boolean> maptf = new HashMap<>();
+        int size = allVertices.size();
+        int[] distance = new int[size];
+        Boolean[] included = new Boolean[size];
+        int count = 0;
+
+        for (V vertex: allVertices) {
+            map.put(vertex, Integer.MAX_VALUE);
+            maptf.put(vertex, false);
+            distance[count] = Integer.MAX_VALUE;
+            included[count] = false;
+        }
+
+        maptf.put(source, true);
+        map.put(source, 0);
+
+        for (int j = 0; j < size - 1; j++) {
+            E edge = minWeight(allEdges);
+            allEdges.remove(edge);
+            int u = minDistance(distance, included);
+            included[u] = true;
+            for (int k = 0; k < size; k++) {
+                if (!included[k] )
+            }
+
+        }
+
+        return null;*/
     }
+
+    // referenced https://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
+
     /**
      * Compute the minimum spanning tree of the graph.
      * See https://en.wikipedia.org/wiki/Minimum_spanning_tree
@@ -248,6 +316,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         return MST;
     }
 //** TODO: write specs
+
+    /**
+     *
+     * @param edges
+     * @return
+     */
     public E minWeight(Set<E> edges) {
         int min = Integer.MAX_VALUE;
         E minEdge = null;
@@ -259,6 +333,83 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         }
         return minEdge;
     }
+//**TODO: write specs
+
+    /**
+     *
+     * @param node
+     */
+    public void minDistance(V node) {
+        Map<V, E> neighbours = getNeighbours(node);
+        Set<V> neighbourNodes = neighbours.keySet();
+        for (V vertex : neighbourNodes) {
+            if (shortestDistance(vertex) > shortestDistance(node) + getDistance(node, vertex)) {
+                distance.put(vertex, shortestDistance(node) + getDistance(node, vertex));
+                predecessors.put(vertex, node);
+                unsettled.add(vertex);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param node
+     * @param target
+     * @return
+     */
+    private int getDistance(V node, V target) {
+        for (Edge edge : edgeList) {
+            if (edge.v1().equals(node)
+                    && edge.v2().equals(target)) {
+                return edge.length();
+            }
+        }
+        throw new RuntimeException("Should not happen");
+    }
+
+    /**
+     *
+     * @param vertices
+     * @return
+     */
+    private V getMin(Set<V> vertices) {
+        V minimum = null;
+        for (V vertex : vertices) {
+            if (minimum == null) {
+                minimum = vertex;
+            } else {
+                if (shortestDistance(vertex) < shortestDistance(minimum)) {
+                    minimum = vertex;
+                }
+            }
+        }
+        return minimum;
+    }
+
+    /**
+     * 
+     * @param destination
+     * @return
+     */
+    private int shortestDistance(V destination) {
+        Integer i = distance.get(destination);
+        if (i == null) {
+            return Integer.MAX_VALUE;
+        } else {
+            return i;
+        }
+    }
+
+       /* int min = Integer.MAX_VALUE;
+        int index = -1;
+
+        for(int i = 0; i < distance.length; i++) {
+            if (included[i] == false && distance[i] <= min) {
+                min = distance[i];
+                index = i
+            }
+        }
+        return index;*/
       /*  Set<V> allVertices = allVertices();
         int length = allVertices.size();
         Set<V> verticesIncluded = new HashSet<>();
