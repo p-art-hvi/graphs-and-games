@@ -289,11 +289,11 @@ public class GraphTest {
         Vertex v1 = new Vertex(1, "Jasmine");
         Vertex v2 = new Vertex(2, "Mulan");
         Vertex v3 = new Vertex(3, "Rapunzel");
-        Vertex v4 = new Vertex(4, "Merida");
+        Vertex v4 = new Vertex(4, "Moana");
         Vertex v5 = new Vertex(5, "Pocahontas");
         Vertex v6 = new Vertex(6, "Belle");
-        Vertex v7 = new Vertex(7, "Tiana");
-        Vertex v8 = new Vertex(8, "Ariel");
+        Vertex v7 = new Vertex(7, "Elsa");
+        Vertex v8 = new Vertex(8, "Tiana");
 
         Edge<Vertex> e1 = new Edge<>(v1, v2, 3);
         Edge<Vertex> e2 = new Edge<>(v2, v6, 6);
