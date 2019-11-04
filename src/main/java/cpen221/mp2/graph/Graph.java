@@ -24,8 +24,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     -- vertexList represents a list containing all vertices in a given map
      */
     private Map<V, Set<V>> graph = new HashMap<>();
-    private List<E> edgeList = new ArrayList<>();
-    private List<V> vertexList = new ArrayList<>();
+    private Set<E> edgeList = new HashSet<>();
+    private Set<V> vertexList = new HashSet<>();
     private Set<V> settled;
     private Set<V> unsettled;
     private Map<V, V> predecessors;
