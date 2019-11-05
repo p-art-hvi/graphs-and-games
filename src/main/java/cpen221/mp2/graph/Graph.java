@@ -1,6 +1,7 @@
 package cpen221.mp2.graph;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents a graph with vertices of type V.
@@ -398,15 +399,10 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
        List<V> path = new ArrayList<>();
        Map<V, Integer> lengthMap = new HashMap<>();
        int length;
-       List<V> vList = new ArrayList<>();
+       List<V> vList = new CopyOnWriteArrayList<>(vSet);
 
-       for (V vertex: vSet) {
-           vList.add(vertex);
-       }
 
-       vList.remove(v);
-
-       for (V vertex: vList) {
+      for (V vertex: vList) {
            List<V> shortest = shortestPath(v, vertex);
            if (shortest != null) {
                map.put(vertex, shortest);
