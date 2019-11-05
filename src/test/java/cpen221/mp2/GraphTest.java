@@ -533,6 +533,23 @@ public class GraphTest {
         e1.distinctVertex(e2);
         e2.distinctVertex(e3);
     }
+
+    @Test
+    public void testVertexClass1(){
+        Vertex v1 = new Vertex(1, "Carly Rae Jepsen");
+        Vertex v2 = new Vertex(2, "Ryan Gosling");
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+
+        assertEquals(1, v1.id());
+        assertEquals("Ryan Gosling", v2.name());
+        assertEquals("Carly Rae Jepsen", v1.name());
+        v1.updateName("Ryan Reynolds");
+        assertEquals("Ryan Reynolds", v1.name());
+        
+    }
     @Test
     public void testShortestPath1(){
         Vertex v1 = new Vertex(1, "Scully");
