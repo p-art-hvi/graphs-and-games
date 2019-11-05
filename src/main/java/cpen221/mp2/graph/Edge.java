@@ -45,9 +45,7 @@ public class Edge<V extends Vertex> {
             if (other.v1.equals(this.v1) && other.v2.equals(this.v2)) {
                 return true;
             }
-            if (other.v1.equals(this.v2) && other.v2.equals(this.v1)) {
-                return true;
-            }
+            return other.v1.equals(this.v2) && other.v2.equals(this.v1);
         }
         return false;
     }
@@ -66,6 +64,11 @@ public class Edge<V extends Vertex> {
         return false;
     }
 
+    /**
+     *
+     * @param e
+     * @return
+     */
     public boolean intersects(Edge<V> e) {
         if (e == null) {
             return false;
@@ -73,6 +76,12 @@ public class Edge<V extends Vertex> {
         return this.incident(e.v1) || this.incident(e.v2);
     }
 
+    /**
+     *
+     * @param e
+     * @return
+     * @throws NoSuchElementException
+     */
     public V intersection(Edge<V> e) throws NoSuchElementException {
         if (e == null) {
             throw new NoSuchElementException("No common vertex");
@@ -86,6 +95,11 @@ public class Edge<V extends Vertex> {
         throw new NoSuchElementException("No common vertex");
     }
 
+    /**
+     *
+     * @param v
+     * @return
+     */
     public V distinctVertex(V v) {
         if (this.v1.equals(v)) {
             return this.v2;
@@ -94,6 +108,11 @@ public class Edge<V extends Vertex> {
         }
     }
 
+    /**
+     *
+     * @param e
+     * @return
+     */
     public V distinctVertex(Edge<V> e) {
         if (this.equals(e)) {
             throw new NoSuchElementException("No distinct vertex");

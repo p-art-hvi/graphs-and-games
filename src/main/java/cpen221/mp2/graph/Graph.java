@@ -216,30 +216,30 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public List<V> shortestPath(V source, V sink) {
-        distance = new HashMap<>();
-        settled = new HashSet<>();
-        unsettled = new HashSet<>();
-        predecessors = new HashMap<>();
+        this.distance = new HashMap<>();
+        this.settled = new HashSet<>();
+        this.unsettled = new HashSet<>();
+        this.predecessors = new HashMap<>();
 
-        distance.put(source, 0);
-        unsettled.add(source);
+        this.distance.put(source, 0);
+        this.unsettled.add(source);
 
-        while (unsettled.size() > 0) {
-            V node = getMin(unsettled);
-            settled.add(node);
-            unsettled.remove(node);
+        while (this.unsettled.size() > 0) {
+            V node = getMin(this.unsettled);
+            this.settled.add(node);
+            this.unsettled.remove(node);
             minDistance(node);
         }
 
         LinkedList<V> path = new LinkedList<V>();
         V target = sink;
 
-        if (predecessors.get(target) == null) {
+        if (this.predecessors.get(target) == null) {
             return null;
         }
         path.add(target);
-        while (predecessors.get(target) != null) {
-            target = predecessors.get(target);
+        while (this.predecessors.get(target) != null) {
+            target = this.predecessors.get(target);
             path.add(target);
         }
         Collections.reverse(path);
@@ -260,9 +260,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         Set <E> edges = allEdges();
         Set<V> allVertices = allVertices();
         List <E> MST = new ArrayList<>();
-        E edge = null;
-        V vertex1 = null;
-        V vertex2 = null;
+        E edge;
+        V vertex1;
+        V vertex2;
 
 
         for (V vertex : allVertices) {
@@ -312,9 +312,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         Set<V> neighbourNodes = neighbours.keySet();
         for (V vertex : neighbourNodes) {
             if (shortestDistance(vertex) > shortestDistance(node) + getDistance(node, vertex)) {
-                distance.put(vertex, shortestDistance(node) + getDistance(node, vertex));
-                predecessors.put(vertex, node);
-                unsettled.add(vertex);
+                this.distance.put(vertex, shortestDistance(node) + getDistance(node, vertex));
+                this.predecessors.put(vertex, node);
+                this.unsettled.add(vertex);
             }
         }
     }
@@ -326,7 +326,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return
      */
     private int getDistance(V node, V target) {
-        for (Edge edge : edgeList) {
+        for (Edge edge : this.edgeList) {
             if (edge.v1().equals(node)
                     && edge.v2().equals(target)) {
                 return edge.length();
@@ -360,7 +360,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return
      */
     private int shortestDistance(V destination) {
-        Integer i = distance.get(destination);
+        Integer i = this.distance.get(destination);
         if (i == null) {
             return Integer.MAX_VALUE;
         } else {
@@ -396,7 +396,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
        Set<V> vSet = allVertices();
        Set<V> reached = new HashSet<>();
        Map<V, List<V>> map = new HashMap<>();
-       List<V> path = new ArrayList<>();
+       List<V> path;
        Map<V, Integer> lengthMap = new HashMap<>();
        int length;
        List<V> vList = new CopyOnWriteArrayList<>(vSet);

@@ -284,7 +284,8 @@ public class GraphTest {
         vSet.add(v4);
         assertEquals(vSet, graph.search(v1, 6));
     }
-*/
+     */
+
 
     @Test
     public void testPathLength1(){
@@ -392,6 +393,146 @@ public class GraphTest {
         assertEquals(17, g.pathLength(list));
     }
 
+    @Test (expected = IllegalArgumentException.class)
+    public void testEdgeClass1(){
+        Vertex v1 = new Vertex(1, "trial");
+        Vertex v2 = null;
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 2);
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addEdge(e1);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testEdgeClass2(){
+        Vertex v1 = new Vertex(1, "vertex1");
+        Edge<Vertex> e1 = new Edge<>(v1, v1, 2);
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addEdge(e1);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testEdgeClass3(){
+        Vertex v1 = new Vertex(1, "vertex1");
+        Vertex v2 = new Vertex(2, "vertex2");
+        Edge<Vertex> e1 = new Edge<>(v1, v2, -1);
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addEdge(e1);
+    }
+
+    @Test
+    public void testEdgeClass4(){
+        Vertex v1 = new Vertex(1, "vertex1");
+        Vertex v2 = new Vertex(2, "vertex2");
+        Vertex v3 = new Vertex(3, "vertex3");
+        Edge<Vertex> e1 = new Edge<>(v1, v2);
+        Edge<Vertex> e2 = new Edge<>(v2, v3);
+        Edge<Vertex> e3 = new Edge<>(v2, v3);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addEdge(e1);
+        g.addEdge(e2);
+
+        assertFalse(e1.equals(e2));
+        assertTrue(e2.equals(e3));
+        assertFalse(e1.incident(null));
+        assertTrue(e1.intersects(e2));
+        assertEquals(false, e1.intersects(null));
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void testEdgeClass5(){
+        Vertex v1 = new Vertex(1, "ugh");
+        Vertex v2 = new Vertex(2, "why");
+        Vertex v3 = new Vertex(3, "nooooo");
+        Vertex v4 = new Vertex(4, "gahhhhhh");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 3);
+        Edge<Vertex> e2 = new Edge<>(v2, v3, 8);
+        Edge<Vertex> e3 = new Edge<>(v2, v4, 9);
+        Edge<Vertex> e4 = new Edge<>(v3, v4, 1);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+
+        assertEquals(v2, e2.intersection(e3));
+        assertEquals(v4, e3.intersection(e4));
+        assertEquals(v3, e2.intersection(e4));
+        e1.intersection(null);
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void testEdgeClass6(){
+        Vertex v1 = new Vertex(1, "I");
+        Vertex v2 = new Vertex(2, "am");
+        Vertex v3 = new Vertex(3, "so");
+        Vertex v4 = new Vertex(4, "tired");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 3);
+        Edge<Vertex> e2 = new Edge<>(v2, v3, 8);
+        Edge<Vertex> e3 = new Edge<>(v2, v4, 9);
+        Edge<Vertex> e4 = new Edge<>(v3, v4, 1);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+
+        assertEquals(v2, e1.distinctVertex(v1));
+        assertEquals(v2, e2.distinctVertex(v3));
+        assertEquals(v3, e2.distinctVertex(e1));
+        e1.intersection(e4);
+    }
+
+    @Test (expected = NoSuchElementException.class)
+    public void testEdgeClass7() {
+        Vertex v1 = new Vertex(1, "Batman");
+        Vertex v2 = new Vertex(2, "Robin");
+        Vertex v3 = new Vertex(3, "Joker");
+        Vertex v4 = new Vertex(4, "Harley Quinn");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 93);
+        Edge<Vertex> e2 = new Edge<>(v1, v2, 93);
+        Edge<Vertex> e3 = new Edge<>(v2, v1, 93);
+        Edge<Vertex> e4 = new Edge<>(v3, v4, 12);
+        Edge<Vertex> e5 = new Edge<>(v3, v2, 14);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+        g.addEdge(e5);
+
+        assertEquals(v4, e4.distinctVertex(e5));
+        assertEquals(v2, e5.distinctVertex(e4));
+        e1.distinctVertex(e4);
+        e1.distinctVertex(e2);
+        e2.distinctVertex(e3);
+    }
     @Test
     public void testShortestPath1(){
         Vertex v1 = new Vertex(1, "Scully");
@@ -423,15 +564,6 @@ public class GraphTest {
         assertEquals(4, shortestPath);
     }
 
-    @Test
-
-    public void testDiameter(){
-        Vertex v1 = new Vertex(1, "Jake Peralta");
-        Vertex v2 = new Vertex(2, "Amy Santiago Peralta");
-        Vertex v3 = new Vertex(3, "Rosa Diaz");
-        Vertex v4 = new Vertex(4, "Doug Judy");
-        Vertex v5 = new Vertex(5, "Captain Raymond Holt")
-    }
     @Test      
     public void testShortestPath2(){
         Vertex v1 = new Vertex(1, "pen and ink");
@@ -562,6 +694,7 @@ public class GraphTest {
         assertEquals(16, shortestPath);
     }
 
+    /*
     @Test
     public void testDiameter1(){
         Vertex v1 = new Vertex(1, "Stir fry");
@@ -588,7 +721,8 @@ public class GraphTest {
 
         assertEquals(40, g.diameter());
     }
-
+*/
+/*
     @Test
     public void testDiameter2(){
         Vertex v1 = new Vertex(1, "Gamora");
@@ -619,4 +753,5 @@ public class GraphTest {
 
         assertEquals(550, g.diameter());
     }
+ */
 }
