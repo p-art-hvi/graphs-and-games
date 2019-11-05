@@ -280,14 +280,38 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public List<V> shortestPath(V source, V sink) {
 
+        Map<V, LinkedList<V>> shortest = dijistra(source);
+        return shortest.get(sink);
        // return (new Dijkstra()).algorithm(source, sink);
-        Map <V, Integer> distance = new HashMap<>();
-        Set <V> settled = new HashSet<>();
-        Set <V> unsettled = new HashSet<>();
-        Map <V, V> predecessors = new HashMap<>();
+
+    }
+
+    public List<V> getPath(V sink, Map<V,V> predecessors) {
+        LinkedList<V> path = new LinkedList<V>();
+        Map <V,V> pred = predecessors;
+        path.add(sink);
+
+        while (pred.get(sink) != null) {
+            sink = pred.get(sink);
+            path.add(sink);
+        }
+
+        Collections.reverse(path);
+
+    return path;
+    }
+
+    // referenced https://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
+    public Map<V, LinkedList<V>> dijistra(V source) {
+        Map<V, Integer> distance = new HashMap<>();
+        Set<V> settled = new HashSet<>();
+        Set<V> unsettled = new HashSet<>();
+        Map<V, V> predecessors = new HashMap<>();
+        Map<V, LinkedList<V>> shortest = new HashMap<>();
 
         distance.put(source, 0);
         unsettled.add(source);
+        settled.remove(source);
 
         while (unsettled.size() > 0) {
             V node = getMin(unsettled, distance);
@@ -296,25 +320,26 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             minDistance(node, distance, settled, unsettled, predecessors);
         }
 
-        LinkedList<V> path = new LinkedList<V>();
-        V target = sink;
+        for (V sink: settled) {
+            LinkedList<V> path = new LinkedList<V>();
+            Map<V, V> pred = predecessors;
+            path.add(sink);
 
-        if (predecessors.get(target) == null) {
-            return null;
+            while (pred.get(sink) != null) {
+                sink = pred.get(sink);
+                path.add(sink);
+            }
+
+            Collections.reverse(path);
+            shortest.put(sink, path);
         }
-
-        path.add(target);
-
-        while (predecessors.get(target) != null) {
-            target = predecessors.get(target);
-            path.add(target);
-        }
-
-        Collections.reverse(path);
-        return path;
+        return shortest;
     }
 
-    // referenced https://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
+        /*if (predecessors.get(target) == null) {
+            return null;
+        }
+*/
 
     /**
      * Compute the minimum spanning tree of the graph.
@@ -419,57 +444,15 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
            lengthMap.put(vertex, length);
        }
        for (V vertex: lengthMap.keySet()) {
-           if (lengthMap.get(vertex) <= range) {
+           if (lengthMap.get(vertex) <= range && lengthMap.get(vertex) != 0) {
                reached.add(vertex);
            }
        }
 
        return reached;
-/*
-       Map<V, E> neighbourMap = new HashMap<>();
-       Set<V> nodeSet = new HashSet<>();
-       int length = 0;
-       int tempPath;
-       int distance = 1000;
-       V u = v;
-        while(!vSet.isEmpty()  && length <= range){
-            length = 0;
-            vSet.remove(u);
-            neighbourMap = getNeighbours(u);
-            nodeSet = neighbourMap.keySet();
-
-            for (V vertex : visited) {
-                nodeSet.remove(vertex);
-            }
-            if(!nodeSet.isEmpty()){
-                for (V vertex: nodeSet){
-                    E edge = neighbourMap.get(vertex);
-                    tempPath = length + edge.length();
-                    if(tempPath < distance){
-                        distance = tempPath;
-                        u = vertex;
-                    }
-                }
-                visited.add(u);
-                length = length + distance;
-            }
-        }
-
-        return visited; */
-
 
     }
 
-    private int getDistance(V node, V target) {
-
-        for (Edge edge : this.edgeList) {
-            if (edge.v1().equals(node)
-                    && edge.v2().equals(target)) {
-                return edge.length();
-            }
-        }
-        return 0;
-    }
 
     /**
      * Compute the diameter of the graph.
