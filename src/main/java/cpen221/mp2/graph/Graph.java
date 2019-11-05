@@ -1,6 +1,7 @@
 package cpen221.mp2.graph;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents a graph with vertices of type V.
@@ -332,7 +333,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             }
         }
         return 0;
-        //throw new RuntimeException("Should not happen");
     }
 
     /**
@@ -367,7 +367,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             return i;
         }
     }
-    
+
     /**
      * Compute the length of a given path
      *
@@ -394,15 +394,43 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public Set<V> search(V v, int range) {
        Set<V> vSet = allVertices();
-       Set<V> visited = new HashSet<>();
+       Set<V> reached = new HashSet<>();
+       Map<V, List<V>> map = new HashMap<>();
+       List<V> path = new ArrayList<>();
+       Map<V, Integer> lengthMap = new HashMap<>();
+       int length;
+       List<V> vList = new CopyOnWriteArrayList<>(vSet);
 
-       Map<V, E> neighbourMap;
-       Set<V> nodeSet;
+
+      for (V vertex: vList) {
+           List<V> shortest = shortestPath(v, vertex);
+           if (shortest != null) {
+               map.put(vertex, shortest);
+           }
+       }
+       for (V vertex: map.keySet()) {
+           path = map.get(vertex);
+           length = 0;
+           for (int i = 0; i < path.size() - 1; i++) {
+               length += getDistance(path.get(i), path.get(i + 1));
+           }
+           lengthMap.put(vertex, length);
+       }
+       for (V vertex: lengthMap.keySet()) {
+           if (lengthMap.get(vertex) <= range) {
+               reached.add(vertex);
+           }
+       }
+
+       return reached;
+/*
+       Map<V, E> neighbourMap = new HashMap<>();
+       Set<V> nodeSet = new HashSet<>();
        int length = 0;
        int tempPath;
        int distance = 1000;
        V u = v;
-        while(!(vSet.isEmpty()) && length <= range){
+        while(!vSet.isEmpty()  && length <= range){
             length = 0;
             vSet.remove(u);
             neighbourMap = getNeighbours(u);
@@ -425,7 +453,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             }
         }
 
-        return visited;
+        return visited; */
+
+
     }
     /**
      * Compute the diameter of the graph.
