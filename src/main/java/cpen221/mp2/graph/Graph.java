@@ -229,10 +229,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
         LinkedList<V> path = new LinkedList<V>();
         V target = sink;
-
+/*
         if (predecessors.get(target) == null) {
             return null;
-        }
+        }*/
+
         path.add(target);
         while (predecessors.get(target) != null) {
             target = predecessors.get(target);
@@ -322,7 +323,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return
      */
     private int getDistance(V node, V target) {
-        for (Edge edge : edgeList) {
+        for (Edge edge : this.edgeList) {
             if (edge.v1().equals(node)
                     && edge.v2().equals(target)) {
                 return edge.length();
