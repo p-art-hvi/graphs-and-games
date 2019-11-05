@@ -105,7 +105,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public int edgeLength(V v1, V v2) {
         for(E edge1: this.edgeList){
-            if(edge1.v1() == v1 && edge1.v2() == v2){
+            if(edge1.v1() == v1 && edge1.v2() == v2 || edge1.v1() == v2 && edge1.v2() == v1){
                 return edge1.length();
             }
         }
@@ -392,6 +392,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a set of vertices that are within range of v (this set does not contain v).
      */
     @Override
+    public Set<V> search(V v, int range){
+        return null;
+    }
+    /*
+    @Override
     public Set<V> search(V v, int range) {
        Set<V> vSet = allVertices();
        Set<V> reached = new HashSet<>();
@@ -454,9 +459,10 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         }
 
         return visited; */
-
+/*
 
     }
+    */
     /**
      * Compute the diameter of the graph.
      * <ul>
@@ -467,6 +473,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @return the diameter of the graph.
      */
+    @Override
+    public int diameter(){
+        return 0;
+    }
+    /*
     @Override
     public int diameter() {
         Set<V> vSet1 = allVertices();
@@ -486,6 +497,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         }
         return longLength;
     }
+
+     */
     /**
      * Find the edge that connects two vertices if such an edge exists.
      * This method should not permit graph mutations.

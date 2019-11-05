@@ -548,7 +548,28 @@ public class GraphTest {
         assertEquals("Carly Rae Jepsen", v1.name());
         v1.updateName("Ryan Reynolds");
         assertEquals("Ryan Reynolds", v1.name());
-        
+
+    }
+
+    @Test
+    public void testEdgeLength(){
+        Vertex v1 = new Vertex(1, "Dora");
+        Vertex v2 = new Vertex(2, "Boots");
+        Vertex v3 = new Vertex(3, "Map");
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 8);
+        Edge<Vertex> e2 = new Edge<>(v2, v1, 8);
+        Edge<Vertex> e3 = new Edge<>(v2, v3, 10);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addEdge(e1);
+        g.addEdge(e2);
+
+        assertEquals(8, g.edgeLength(v1, v2));
+        assertEquals(8, g.edgeLength(v2, v1));
+        assertEquals(0, g.edgeLength(v2, v3));
     }
     @Test
     public void testShortestPath1(){
