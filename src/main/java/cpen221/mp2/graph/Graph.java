@@ -533,6 +533,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @param rng random number generator to select edges at random
      */
+
     public void pruneRandomEdges(Random rng) {
         class VEPair {
             V v;
