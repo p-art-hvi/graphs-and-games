@@ -424,6 +424,15 @@ public class GraphTest {
     }
 
     @Test
+
+    public void testDiameter(){
+        Vertex v1 = new Vertex(1, "Jake Peralta");
+        Vertex v2 = new Vertex(2, "Amy Santiago Peralta");
+        Vertex v3 = new Vertex(3, "Rosa Diaz");
+        Vertex v4 = new Vertex(4, "Doug Judy");
+        Vertex v5 = new Vertex(5, "Captain Raymond Holt")
+    }
+    @Test      
     public void testShortestPath2(){
         Vertex v1 = new Vertex(1, "pen and ink");
         Vertex v2 = new Vertex(2, "oil paint");
