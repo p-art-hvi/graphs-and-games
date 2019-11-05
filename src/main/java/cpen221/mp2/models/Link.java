@@ -15,7 +15,7 @@ import java.util.Objects;
  * <p>
  * An instance represents a link between two planets.
  */
-public class Link extends Edge<Planet> implements GameElement {
+public class Link extends Edge<Planet> implements GameElement/*, Comparable<Link>*/ {
 
     private int visits; // The number of times this cpen221.mp2.graph.Edge has been visited.
 
@@ -140,5 +140,9 @@ public class Link extends Edge<Planet> implements GameElement {
         return visits;
     }
 
-
+/*
+    @Override
+    public int compareTo(Link o) {
+        return 0;
+    }*/
 }

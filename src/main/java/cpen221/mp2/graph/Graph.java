@@ -1,6 +1,7 @@
 package cpen221.mp2.graph;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents a graph with vertices of type V.
@@ -24,8 +25,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     -- vertexList represents a list containing all vertices in a given map
      */
     private Map<V, Set<V>> graph = new HashMap<>();
-    private List<E> edgeList = new ArrayList<>();
+    private Set<E> edgeList = new HashSet<>();
     private Set<V> vertexList = new HashSet<>();
+    private Set<V> settled;
+    private Set<V> unsettled;
+    private Map<V, V> predecessors;
+    private Map<V, Integer> distance;
+
     /**
      * Add a vertex to the graph
      *
@@ -210,8 +216,38 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public List<V> shortestPath(V source, V sink) {
-        return null;
+        distance = new HashMap<>();
+        settled = new HashSet<>();
+        unsettled = new HashSet<>();
+        predecessors = new HashMap<>();
+
+        distance.put(source, 0);
+        unsettled.add(source);
+
+        while (unsettled.size() > 0) {
+            V node = getMin(unsettled);
+            settled.add(node);
+            unsettled.remove(node);
+            minDistance(node);
+        }
+
+        LinkedList<V> path = new LinkedList<V>();
+        V target = sink;
+
+        if (predecessors.get(target) == null) {
+            return null;
+        }
+        path.add(target);
+        while (predecessors.get(target) != null) {
+            target = predecessors.get(target);
+            path.add(target);
+        }
+        Collections.reverse(path);
+        return path;
     }
+
+    // referenced https://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
+
     /**
      * Compute the minimum spanning tree of the graph.
      * See https://en.wikipedia.org/wiki/Minimum_spanning_tree
@@ -220,106 +256,118 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public List<E> minimumSpanningTree() {
+        Groups vertices = new Groups();
+        Set <E> edges = allEdges();
         Set<V> allVertices = allVertices();
-        int length = allVertices.size();
-        Set<V> verticesIncluded = new HashSet<>();
-        int count = 0;
-        boolean master[] = new boolean [length];
-        Map <V, E> neighbours = new HashMap<>();
+        List <E> MST = new ArrayList<>();
+        E edge = null;
         V vertex1 = null;
         V vertex2 = null;
-        List<E> order = new ArrayList<>();
-        E edge = null;
 
-        Map<V, Integer> map = new HashMap<>();
 
-        for (int i = 0; i < length; i++) {
-            master[i] = false;
+        for (V vertex : allVertices) {
+            vertices.add(vertex);
         }
 
-
-        for (V vertex: allVertices) {
-            map.put(vertex, Integer.MAX_VALUE);
-            count++;
-            if (count == 1) {
-                map.put(vertex, 0);
-                vertex2 = vertex;
+       while( edges.size() != 0) {
+            edge = minWeight(edges);
+            edges.remove(edge);
+            vertex1 = edge.v1();
+            vertex2 = edge.v2();
+            if (vertices.find(vertex1) != vertices.find(vertex2)) {
+                MST.add(edge);
+                vertices.merge(vertex1, vertex2);
             }
+
         }
 
-        while (verticesIncluded.size() != length) {
-            vertex1 = vertex2;
-            for (int i = 0; i < length - 1; i++) {
-                Integer min = minKey(map, master, allVertices);
-                master[min] = true;
-
-                for (V vertex: allVertices) {
-                    if (map.get(vertex).equals(min)) {
-                        vertex2 = getKey(map, min);
-                        verticesIncluded.add(vertex1);
-                    }
-                }
-
-                neighbours = getNeighbours(vertex1);
-
-                for (V vertex: allVertices) {
-                    if (neighbours.containsKey(vertex)) {
-                        int weight = neighbours.get(vertex).length();
-                        if (weight < map.get(vertex)) {
-                            map.put(vertex, weight);
-                        }
-                    }
-                }
-            }
-            edge = getEdge(vertex1, vertex2);
-            order.add(edge);
-        }
-
-        return order;
+        return MST;
     }
-
-    /** TODO write specs
-     *
-     * @param map map of all vertices and their weight associated to them.  All except one key-value
-     *            pair begin with the value MAX_Integer, and this value changes as more vertices are added
-     *            to the MSP.
-     * @param value value of key being searched for
-     * @return the vertex which matches the value being searched for
-     */
-    public V getKey(Map<V, Integer> map, Integer value) {
-        for (Map.Entry<V, Integer> entry: map.entrySet()) {
-            if (entry.getValue().equals(value)) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-    //used https://www.baeldung.com/java-map-key-from-value
+//** TODO: write specs
 
     /**
-     * @param map map of all vertices and their weight associated to them.  All except one key-value
-     *        pair begin with the value MAX_Integer, and this value changes as more vertices are added
-     *        to the MSP.
-     * @param master represents which vertices are contained in the current MSP
-     * @param allVertices contains all vertices in the map being searched
-     * @return value of next-closest vertex
+     *
+     * @param edges
+     * @return
      */
-    public int minKey(Map<V, Integer> map, boolean master[], Set<V> allVertices) {
+    public E minWeight(Set<E> edges) {
         int min = Integer.MAX_VALUE;
-        int index = -1;
-        int i = 0;
+        E minEdge = null;
 
-        for (V vertex: allVertices) {
-            if (!master[i] && map.get(vertex) < min) {
-                min = map.get(vertex);
-                index = i;
+        for (E edge: edges) {
+            if (edge.length() < min) {
+                minEdge = edge;
             }
-            i++;
         }
-        return index;
+        return minEdge;
+    }
+//**TODO: write specs
+
+    /**
+     *
+     * @param node
+     */
+    public void minDistance(V node) {
+        Map<V, E> neighbours = getNeighbours(node);
+        Set<V> neighbourNodes = neighbours.keySet();
+        for (V vertex : neighbourNodes) {
+            if (shortestDistance(vertex) > shortestDistance(node) + getDistance(node, vertex)) {
+                distance.put(vertex, shortestDistance(node) + getDistance(node, vertex));
+                predecessors.put(vertex, node);
+                unsettled.add(vertex);
+            }
+        }
     }
 
-    //used https://www.geeksforgeeks.org/prims-minimum-spanning-tree-mst-greedy-algo-5/
+    /**
+     *
+     * @param node
+     * @param target
+     * @return
+     */
+    private int getDistance(V node, V target) {
+        for (Edge edge : edgeList) {
+            if (edge.v1().equals(node)
+                    && edge.v2().equals(target)) {
+                return edge.length();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     *
+     * @param vertices
+     * @return
+     */
+    private V getMin(Set<V> vertices) {
+        V minimum = null;
+        for (V vertex : vertices) {
+            if (minimum == null) {
+                minimum = vertex;
+            } else {
+                if (shortestDistance(vertex) < shortestDistance(minimum)) {
+                    minimum = vertex;
+                }
+            }
+        }
+        return minimum;
+    }
+
+    /**
+     * 
+     * @param destination
+     * @return
+     */
+    private int shortestDistance(V destination) {
+        Integer i = distance.get(destination);
+        if (i == null) {
+            return Integer.MAX_VALUE;
+        } else {
+            return i;
+        }
+    }
+
     /**
      * Compute the length of a given path
      *
@@ -346,15 +394,43 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public Set<V> search(V v, int range) {
        Set<V> vSet = allVertices();
-       Set<V> visited = new HashSet<>();
+       Set<V> reached = new HashSet<>();
+       Map<V, List<V>> map = new HashMap<>();
+       List<V> path = new ArrayList<>();
+       Map<V, Integer> lengthMap = new HashMap<>();
+       int length;
+       List<V> vList = new CopyOnWriteArrayList<>(vSet);
 
-       Map<V, E> neighbourMap;
-       Set<V> nodeSet;
+
+      for (V vertex: vList) {
+           List<V> shortest = shortestPath(v, vertex);
+           if (shortest != null) {
+               map.put(vertex, shortest);
+           }
+       }
+       for (V vertex: map.keySet()) {
+           path = map.get(vertex);
+           length = 0;
+           for (int i = 0; i < path.size() - 1; i++) {
+               length += getDistance(path.get(i), path.get(i + 1));
+           }
+           lengthMap.put(vertex, length);
+       }
+       for (V vertex: lengthMap.keySet()) {
+           if (lengthMap.get(vertex) <= range) {
+               reached.add(vertex);
+           }
+       }
+
+       return reached;
+/*
+       Map<V, E> neighbourMap = new HashMap<>();
+       Set<V> nodeSet = new HashSet<>();
        int length = 0;
        int tempPath;
        int distance = 1000;
        V u = v;
-        while(!(vSet.isEmpty()) && length <= range){
+        while(!vSet.isEmpty()  && length <= range){
             length = 0;
             vSet.remove(u);
             neighbourMap = getNeighbours(u);
@@ -377,7 +453,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             }
         }
 
-        return visited;
+        return visited; */
+
+
     }
     /**
      * Compute the diameter of the graph.
@@ -392,11 +470,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public int diameter() {
         Set<V> vSet1 = allVertices();
-        Set<V> vSet2 = allVertices();
+        Set<V> vSet2;
         int length;
         int longLength = 0;
-        List<V> shortList;
         for(V v1: vSet1){
+            List<V> shortList;
+            vSet2 = getNeighbours(v1).keySet();
             for(V v2: vSet2){
                 shortList = shortestPath(v1, v2);
                 length = pathLength(shortList);
