@@ -331,7 +331,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
                 return edge.length();
             }
         }
-        throw new RuntimeException("Should not happen");
+        return 0;
+        //throw new RuntimeException("Should not happen");
     }
 
     /**
