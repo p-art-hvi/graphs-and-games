@@ -331,7 +331,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
                 return edge.length();
             }
         }
-        throw new RuntimeException("Should not happen");
+        return 0;
+        //throw new RuntimeException("Should not happen");
     }
 
     /**
@@ -439,11 +440,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public int diameter() {
         Set<V> vSet1 = allVertices();
-        Set<V> vSet2 = allVertices();
+        Set<V> vSet2;
         int length;
         int longLength = 0;
-        List<V> shortList;
         for(V v1: vSet1){
+            List<V> shortList;
+            vSet2 = getNeighbours(v1).keySet();
             for(V v2: vSet2){
                 shortList = shortestPath(v1, v2);
                 length = pathLength(shortList);

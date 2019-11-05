@@ -247,8 +247,9 @@ public class GraphTest {
         assertEquals(expected, MSP);
     }
 
+    /*
     @Test
-    public void testSearch(){
+    public void testSearch1(){
         Vertex v1 = new Vertex(1, "Jake Peralta");
         Vertex v2 = new Vertex(2, "Amy Santiago Peralta");
         Vertex v3 = new Vertex(3, "Rosa Diaz");
@@ -283,9 +284,10 @@ public class GraphTest {
         vSet.add(v4);
         assertEquals(vSet, graph.search(v1, 6));
     }
+*/
 
     @Test
-    public void testLongPathLength(){
+    public void testPathLength1(){
         Vertex v1 = new Vertex(1, "Jasmine");
         Vertex v2 = new Vertex(2, "Mulan");
         Vertex v3 = new Vertex(3, "Rapunzel");
@@ -340,7 +342,7 @@ public class GraphTest {
     }
 
     @Test
-    public void testShortLength(){
+    public void testPathLength2(){
         Vertex v1 = new Vertex(1, "Deep-fried oreos");
         Vertex v2 = new Vertex(2, "Deep-fried ice-cream");
         Vertex v3 = new Vertex(3, "Deep-fried pickles");
@@ -391,20 +393,221 @@ public class GraphTest {
     }
 
     @Test
-    public void testShortestPath(){
-        Vertex v1 = new Vertex(1, "Jake Peralta");
-        Vertex v2 = new Vertex(2, "Amy Santiago Peralta");
-        Vertex v3 = new Vertex(3, "Rosa Diaz");
-        Vertex v4 = new Vertex(4, "Doug Judy");
-        Vertex v5 = new Vertex(5, "Captain Raymond Holt");
+    public void testShortestPath1(){
+        Vertex v1 = new Vertex(1, "Scully");
+        Vertex v2 = new Vertex(2, "Hitchcock");
+        Vertex v3 = new Vertex(3, "Pimento");
+        Vertex v4 = new Vertex(4, "Caleb the Cannibal");
+        Vertex v5 = new Vertex(5, "Charles Boyle");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 2);
+        Edge<Vertex> e2 = new Edge<>(v2, v4, 2);
+        Edge<Vertex> e3 = new Edge<>(v1, v3, 9);
+        Edge<Vertex> e4 = new Edge<>(v1, v4, 16);
+        Edge<Vertex> e5 = new Edge<>(v2, v5, 13);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+        g.addVertex(v5);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+        g.addEdge(e5);
+
+        List<Vertex> shortestVertices = g.shortestPath(v1, v4);
+        int shortestPath = g.pathLength(shortestVertices);
+        assertEquals(4, shortestPath);
     }
 
     @Test
-    public void testDiameter(){
-        Vertex v1 = new Vertex(1, "Jake Peralta");
-        Vertex v2 = new Vertex(2, "Amy Santiago Peralta");
-        Vertex v3 = new Vertex(3, "Rosa Diaz");
-        Vertex v4 = new Vertex(4, "Doug Judy");
-        Vertex v5 = new Vertex(5, "Captain Raymond Holt");
+    public void testShortestPath2(){
+        Vertex v1 = new Vertex(1, "pen and ink");
+        Vertex v2 = new Vertex(2, "oil paint");
+        Vertex v3 = new Vertex(3, "acrylic paint");
+        Vertex v4 = new Vertex(4, "crayons");
+        Vertex v5 = new Vertex(5, "pastels");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 2);
+        Edge<Vertex> e2 = new Edge<>(v2, v4, 2);
+        Edge<Vertex> e3 = new Edge<>(v2, v3, 2);
+        Edge<Vertex> e4 = new Edge<>(v1, v5, 2);
+        Edge<Vertex> e5 = new Edge<>(v2, v5, 2);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+        g.addVertex(v5);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+        g.addEdge(e5);
+
+        List<Vertex> shortestVertices = g.shortestPath(v2, v5);
+        int shortestPath = g.pathLength(shortestVertices);
+        assertEquals(2, shortestPath);
+    }
+
+    @Test
+    public void testShortestPath3(){
+        Vertex v1 = new Vertex(1, "please");
+        Vertex v2 = new Vertex(2, "let");
+        Vertex v3 = new Vertex(3, "this");
+        Vertex v4 = new Vertex(4, "testcase");
+        Vertex v5 = new Vertex(5, "work");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 2);
+        Edge<Vertex> e2 = new Edge<>(v2, v3, 6);
+        Edge<Vertex> e3 = new Edge<>(v2, v4, 13);
+        Edge<Vertex> e4 = new Edge<>(v3, v4, 20);
+        Edge<Vertex> e5 = new Edge<>(v2, v5, 3);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+        g.addVertex(v5);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+        g.addEdge(e5);
+
+        List<Vertex> shortestVertices = g.shortestPath(v1, v4);
+        int shortestPath = g.pathLength(shortestVertices);
+        assertEquals(15, shortestPath);
+    }
+
+    @Test
+    public void testShortestPath4(){
+        Vertex v1 = new Vertex(1, "hopefully");
+        Vertex v2 = new Vertex(2, "this");
+        Vertex v3 = new Vertex(3, "testcase");
+        Vertex v4 = new Vertex(4, "also");
+        Vertex v5 = new Vertex(5, "works");
+        Vertex v6 = new Vertex(5, "otherwise");
+        Vertex v7 = new Vertex(5, "I");
+        Vertex v8 = new Vertex(5, "will");
+        Vertex v9 = new Vertex(5, "be");
+        Vertex v10 = new Vertex(5, "sad");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v10, 10000);
+        Edge<Vertex> e2 = new Edge<>(v1, v2, 2);
+        Edge<Vertex> e3 = new Edge<>(v2, v4, 2);
+        Edge<Vertex> e4 = new Edge<>(v4, v5, 2);
+        Edge<Vertex> e5 = new Edge<>(v5, v6, 2);
+        Edge<Vertex> e6 = new Edge<>(v6, v7, 2);
+        Edge<Vertex> e7 = new Edge<>(v7, v8, 2);
+        Edge<Vertex> e8 = new Edge<>(v8, v9, 2);
+        Edge<Vertex> e9 = new Edge<>(v9, v10, 2);
+        Edge<Vertex> e10 = new Edge<>(v1, v3, 60);
+        Edge<Vertex> e11 = new Edge<>(v2, v3, 70);
+        Edge<Vertex> e12 = new Edge<>(v3, v4, 80);
+        Edge<Vertex> e13 = new Edge<>(v3, v5, 20);
+        Edge<Vertex> e14 = new Edge<>(v3, v6, 30);
+        Edge<Vertex> e15 = new Edge<>(v3, v7, 400);
+        Edge<Vertex> e16 = new Edge<>(v1, v7, 50);
+        Edge<Vertex> e17 = new Edge<>(v1, v8, 60);
+        Edge<Vertex> e18 = new Edge<>(v2, v10, 3000);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+        g.addVertex(v5);
+        g.addVertex(v6);
+        g.addVertex(v7);
+        g.addVertex(v8);
+        g.addVertex(v9);
+        g.addVertex(v10);
+
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+        g.addEdge(e5);
+        g.addEdge(e6);
+        g.addEdge(e7);
+        g.addEdge(e8);
+        g.addEdge(e9);
+        g.addEdge(e10);
+        g.addEdge(e11);
+        g.addEdge(e12);
+        g.addEdge(e13);
+        g.addEdge(e14);
+        g.addEdge(e15);
+        g.addEdge(e16);
+        g.addEdge(e17);
+        g.addEdge(e18);
+
+        List<Vertex> shortestVertices = g.shortestPath(v1, v10);
+        int shortestPath = g.pathLength(shortestVertices);
+        assertEquals(16, shortestPath);
+    }
+
+    @Test
+    public void testDiameter1(){
+        Vertex v1 = new Vertex(1, "Stir fry");
+        Vertex v2 = new Vertex(2, "Pad thai");
+        Vertex v3 = new Vertex(3, "Poke");
+        Vertex v4 = new Vertex(4, "Sushi");
+        Vertex v5 = new Vertex(5, "Tempura");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 1);
+        Edge<Vertex> e2 = new Edge<>(v1, v3, 2);
+        Edge<Vertex> e3 = new Edge<>(v1, v4, 3);
+        Edge<Vertex> e4 = new Edge<>(v1, v5, 40);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+        g.addVertex(v5);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+
+        assertEquals(40, g.diameter());
+    }
+
+    @Test
+    public void testDiameter2(){
+        Vertex v1 = new Vertex(1, "Gamora");
+        Vertex v2 = new Vertex(2, "Groot");
+        Vertex v3 = new Vertex(3, "Rocket");
+        Vertex v4 = new Vertex(4, "Star Lord");
+        Vertex v5 = new Vertex(5, "Drax 'The Destroyer' ");
+
+        Edge<Vertex> e1 = new Edge<>(v1, v2, 5);
+        Edge<Vertex> e2 = new Edge<>(v2, v3, 10);
+        Edge<Vertex> e3 = new Edge<>(v3, v4, 10);
+        Edge<Vertex> e4 = new Edge<>(v1, v4, 15);
+        Edge<Vertex> e5 = new Edge<>(v1, v3, 500);
+        Edge<Vertex> e6 = new Edge<>(v3, v5, 50);
+
+        Graph<Vertex, Edge<Vertex>> g = new Graph<>();
+        g.addVertex(v1);
+        g.addVertex(v2);
+        g.addVertex(v3);
+        g.addVertex(v4);
+        g.addVertex(v5);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+        g.addEdge(e5);
+        g.addEdge(e6);
+
+        assertEquals(550, g.diameter());
     }
 }
