@@ -104,8 +104,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public int edgeLength(V v1, V v2) {
-        for (E edge1 : this.edgeList) {
-            if (edge1.v1() == v1 && edge1.v2() == v2) {
+        for(E edge1: this.edgeList){
+            if(edge1.v1() == v1 && edge1.v2() == v2 || edge1.v1() == v2 && edge1.v2() == v1){
                 return edge1.length();
             }
         }
@@ -279,60 +279,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public List<V> shortestPath(V source, V sink) {
-
-        Map<V, LinkedList<V>> shortest = dijistra(source);
-        return shortest.get(sink);
-       // return (new Dijkstra()).algorithm(source, sink);
-
-    }
-
-    public List<V> getPath(V sink, Map<V,V> predecessors) {
-        LinkedList<V> path = new LinkedList<V>();
-        Map <V,V> pred = predecessors;
-        path.add(sink);
-
-        while (pred.get(sink) != null) {
-            sink = pred.get(sink);
-            path.add(sink);
-        }
-
-        Collections.reverse(path);
-
-    return path;
-    }
-
-    // referenced https://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
-    public Map<V, LinkedList<V>> dijistra(V source) {
-        Map<V, Integer> distance = new HashMap<>();
-        Set<V> settled = new HashSet<>();
-        Set<V> unsettled = new HashSet<>();
-        Map<V, V> predecessors = new HashMap<>();
-        Map<V, LinkedList<V>> shortest = new HashMap<>();
-
-        distance.put(source, 0);
-        unsettled.add(source);
-        settled.remove(source);
-
-        while (unsettled.size() > 0) {
-            V node = getMin(unsettled, distance);
-            settled.add(node);
-            unsettled.remove(node);
-            minDistance(node, distance, settled, unsettled, predecessors);
-        }
-
-        for (V sink: settled) {
-            LinkedList<V> path = new LinkedList<V>();
-            Map<V, V> pred = predecessors;
-            path.add(sink);
-
-            while (pred.get(sink) != null) {
-                sink = pred.get(sink);
-                path.add(sink);
-            }
-
-            Collections.reverse(path);
-            shortest.put(sink, path);
-        }
         return shortest;
     }
 
@@ -352,10 +298,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         Groups vertices = new Groups();
         Set<E> edges = allEdges();
         Set<V> allVertices = allVertices();
-        List<E> MST = new ArrayList<>();
-        E edge = null;
-        V vertex1 = null;
-        V vertex2 = null;
+
+        List <E> MST = new ArrayList<>();
+        E edge;
+        V vertex1;
+        V vertex2;
+
 
 
         for (V vertex : allVertices) {
@@ -394,6 +342,71 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         return minEdge;
     }
 
+    /**
+     *
+     * @param node
+     */
+    public void minDistance(V node) {
+        Map<V, E> neighbours = getNeighbours(node);
+        Set<V> neighbourNodes = neighbours.keySet();
+        for (V vertex : neighbourNodes) {
+            if (shortestDistance(vertex) > shortestDistance(node) + getDistance(node, vertex)) {
+                this.distance.put(vertex, shortestDistance(node) + getDistance(node, vertex));
+                this.predecessors.put(vertex, node);
+                this.unsettled.add(vertex);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param node
+     * @param target
+     * @return
+     */
+    private int getDistance(V node, V target) {
+        for (Edge edge : this.edgeList) {
+            if (edge.v1().equals(node)
+                    && edge.v2().equals(target)) {
+                return edge.length();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     *
+     * @param vertices
+     * @return
+     */
+    private V getMin(Set<V> vertices) {
+        V minimum = null;
+        for (V vertex : vertices) {
+            if (minimum == null) {
+                minimum = vertex;
+            } else {
+                if (shortestDistance(vertex) < shortestDistance(minimum)) {
+                    minimum = vertex;
+                }
+            }
+        }
+        return minimum;
+    }
+
+    /**
+     * 
+     * @param destination
+     * @return
+     */
+    private int shortestDistance(V destination) {
+        Integer i = this.distance.get(destination);
+        if (i == null) {
+            return Integer.MAX_VALUE;
+        } else {
+            return i;
+        }
+    }
+
 
     /**
      * Compute the length of a given path
@@ -419,11 +432,16 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @return a set of vertices that are within range of v (this set does not contain v).
      */
     @Override
+    public Set<V> search(V v, int range){
+        return null;
+    }
+    /*
+    @Override
     public Set<V> search(V v, int range) {
        Set<V> vSet = allVertices();
        Set<V> reached = new HashSet<>();
        Map<V, List<V>> map = new HashMap<>();
-       List<V> path = new ArrayList<>();
+       List<V> path;
        Map<V, Integer> lengthMap = new HashMap<>();
        int length;
        List<V> vList = new CopyOnWriteArrayList<>(vSet);
@@ -451,8 +469,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
        return reached;
 
-    }
+        return visited; */
+/*
 
+    }
+    */
 
     /**
      * Compute the diameter of the graph.
@@ -464,6 +485,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @return the diameter of the graph.
      */
+    @Override
+    public int diameter(){
+        return 0;
+    }
+    /*
     @Override
     public int diameter() {
         Set<V> vSet1 = allVertices();
@@ -483,6 +509,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         }
         return longLength;
     }
+
+     */
     /**
      * Find the edge that connects two vertices if such an edge exists.
      * This method should not permit graph mutations.
@@ -518,6 +546,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @param rng random number generator to select edges at random
      */
+
     public void pruneRandomEdges(Random rng) {
         class VEPair {
             V v;
