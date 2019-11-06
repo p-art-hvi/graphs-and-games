@@ -279,13 +279,46 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public List<V> shortestPath(V source, V sink) {
-        return shortest;
+
+        Map<V, List<V>> allPaths = shortestMap(source);
+        return allPaths.get(sink);
     }
 
-        /*if (predecessors.get(target) == null) {
-            return null;
+    public Map<V, List<V>> shortestMap (V source) {
+        Map<V, Integer> distance = new HashMap<>();
+        List<V> settled = new ArrayList<>();
+        List<V> unsettled = new ArrayList<>();
+        Map<V, V> predecessors = new HashMap<>();
+        Map<V, List<V>> allPaths = new HashMap<>();
+
+        distance.put(source, 0);
+        unsettled.add(source);
+
+        while (unsettled.size() > 0) {
+            V node = getMin(unsettled, distance);
+            settled.add(node);
+            unsettled.remove(node);
+            minDistance(node, distance, settled, unsettled, predecessors);
         }
-*/
+
+        for (int i = 0; i < settled.size(); i++) {
+            List<V> path = new ArrayList<>();
+            V target = settled.get(i);
+            V initial = settled.get(i);
+            path.add(target);
+            while (predecessors.get(target) != null) {
+                target = predecessors.get(target);
+                path.add(target);
+            }
+            Collections.reverse(path);
+            allPaths.put(initial, path);
+        }
+        return allPaths;
+    }
+    // referenced https://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
+    
+
+
 
     /**
      * Compute the minimum spanning tree of the graph.
@@ -346,7 +379,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @param node
      */
-    public void minDistance(V node) {
+
+    public void minDistance(V node, Map<V, Integer> distance, List<V> settled,List<V> unsettled, Map<V, V> predecessors) {
+
         Map<V, E> neighbours = getNeighbours(node);
         Set<V> neighbourNodes = neighbours.keySet();
         for (V vertex : neighbourNodes) {
@@ -379,7 +414,10 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param vertices
      * @return
      */
-    private V getMin(Set<V> vertices) {
+
+    private V getMin(List<V> vertices, Map<V, Integer> distance) {
+
+
         V minimum = null;
         for (V vertex : vertices) {
             if (minimum == null) {
@@ -445,10 +483,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
        Map<V, Integer> lengthMap = new HashMap<>();
        int length;
        List<V> vList = new CopyOnWriteArrayList<>(vSet);
+       Map<V, List<V>> shortestMap = shortestMap(v);
 
 
       for (V vertex: vList) {
-           List<V> shortest = shortestPath(v, vertex);
+           List<V> shortest = shortestMap.get(vertex);
            if (shortest != null) {
                map.put(vertex, shortest);
            }
@@ -468,9 +507,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
        }
 
        return reached;
-
-        return visited; */
-/*
 
     }
     */
@@ -492,15 +528,23 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     /*
     @Override
     public int diameter() {
-        Set<V> vSet1 = allVertices();
-        Set<V> vSet2;
+        List<V> vList1 = new ArrayList<>();
+        List<V> vList2 = new ArrayList<>();
         int length;
         int longLength = 0;
-        for(V v1: vSet1){
+
+        for (V vertex: allVertices()) {
+            vList1.add(vertex);
+        }
+
+        for(V v1: vList1){
+            Map<V, List<V>> shortestMap = shortestMap(v1);
             List<V> shortList;
-            vSet2 = getNeighbours(v1).keySet();
-            for(V v2: vSet2){
-                shortList = shortestPath(v1, v2);
+            for (V vertex: getNeighbours(v1).keySet()) {
+                vList2.add(vertex);
+            }
+            for(V v2: vList2){
+                shortList = shortestMap.get(v2);
                 length = pathLength(shortList);
                 if(length > longLength){
                     longLength = length;
