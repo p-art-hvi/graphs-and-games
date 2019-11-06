@@ -212,10 +212,16 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public List<V> shortestPath(V source, V sink) {
-        Map <V, Integer> distance = new HashMap<>();
-        Set <V> settled = new HashSet<>();
-        Set <V> unsettled = new HashSet<>();
-        Map <V, V> predecessors = new HashMap<>();
+        Map<V, List<V>> allPaths = shortestMap(source);
+        return allPaths.get(sink);
+    }
+
+    public Map<V, List<V>> shortestMap (V source) {
+        Map<V, Integer> distance = new HashMap<>();
+        List<V> settled = new ArrayList<>();
+        List<V> unsettled = new ArrayList<>();
+        Map<V, V> predecessors = new HashMap<>();
+        Map<V, List<V>> allPaths = new HashMap<>();
 
         distance.put(source, 0);
         unsettled.add(source);
@@ -227,22 +233,20 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             minDistance(node, distance, settled, unsettled, predecessors);
         }
 
-        LinkedList<V> path = new LinkedList<V>();
-        V target = sink;
-/*
-        if (predecessors.get(target) == null) {
-            return null;
-        }*/
-
-        path.add(target);
-        while (predecessors.get(target) != null) {
-            target = predecessors.get(target);
+        for (int i = 0; i < settled.size(); i++) {
+            List<V> path = new ArrayList<>();
+            V target = settled.get(i);
+            V initial = settled.get(i);
             path.add(target);
+            while (predecessors.get(target) != null) {
+                target = predecessors.get(target);
+                path.add(target);
+            }
+            Collections.reverse(path);
+            allPaths.put(initial, path);
         }
-        Collections.reverse(path);
-        return path;
+        return allPaths;
     }
-
     // referenced https://www.vogella.com/tutorials/JavaAlgorithmsDijkstra/article.html
 
     /**
@@ -304,7 +308,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @param node
      */
-    public void minDistance(V node, Map<V, Integer> distance, Set<V> settled, Set<V> unsettled, Map<V, V> predecessors) {
+    public void minDistance(V node, Map<V, Integer> distance, List<V> settled,List<V> unsettled, Map<V, V> predecessors) {
         Map<V, E> neighbours = getNeighbours(node);
         Set<V> neighbourNodes = neighbours.keySet();
         for (V vertex : neighbourNodes) {
@@ -337,7 +341,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param vertices
      * @return
      */
-    private V getMin(Set<V> vertices, Map<V, Integer> distance) {
+    private V getMin(List<V> vertices, Map<V, Integer> distance) {
         V minimum = null;
         for (V vertex : vertices) {
             if (minimum == null) {
@@ -397,10 +401,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
        Map<V, Integer> lengthMap = new HashMap<>();
        int length;
        List<V> vList = new CopyOnWriteArrayList<>(vSet);
+       Map<V, List<V>> shortestMap = shortestMap(v);
 
 
       for (V vertex: vList) {
-           List<V> shortest = shortestPath(v, vertex);
+           List<V> shortest = shortestMap.get(vertex);
            if (shortest != null) {
                map.put(vertex, shortest);
            }
@@ -414,44 +419,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
            lengthMap.put(vertex, length);
        }
        for (V vertex: lengthMap.keySet()) {
-           if (lengthMap.get(vertex) <= range) {
+           if (lengthMap.get(vertex) <= range && lengthMap.get(vertex) != 0) {
                reached.add(vertex);
            }
        }
 
        return reached;
-/*
-       Map<V, E> neighbourMap = new HashMap<>();
-       Set<V> nodeSet = new HashSet<>();
-       int length = 0;
-       int tempPath;
-       int distance = 1000;
-       V u = v;
-        while(!vSet.isEmpty()  && length <= range){
-            length = 0;
-            vSet.remove(u);
-            neighbourMap = getNeighbours(u);
-            nodeSet = neighbourMap.keySet();
-
-            for (V vertex : visited) {
-                nodeSet.remove(vertex);
-            }
-            if(!nodeSet.isEmpty()){
-                for (V vertex: nodeSet){
-                    E edge = neighbourMap.get(vertex);
-                    tempPath = length + edge.length();
-                    if(tempPath < distance){
-                        distance = tempPath;
-                        u = vertex;
-                    }
-                }
-                visited.add(u);
-                length = length + distance;
-            }
-        }
-
-        return visited; */
-
 
     }
     /**
