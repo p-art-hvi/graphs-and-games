@@ -304,8 +304,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         V vertex1;
         V vertex2;
 
-
-
         for (V vertex : allVertices) {
             vertices.add(vertex);
         }
@@ -350,10 +348,10 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         Map<V, E> neighbours = getNeighbours(node);
         Set<V> neighbourNodes = neighbours.keySet();
         for (V vertex : neighbourNodes) {
-            if (shortestDistance(vertex) > shortestDistance(node) + getDistance(node, vertex)) {
-                this.distance.put(vertex, shortestDistance(node) + getDistance(node, vertex));
-                this.predecessors.put(vertex, node);
-                this.unsettled.add(vertex);
+            if (shortestDistance(vertex, distance) > shortestDistance(node, distance) + getDistance(node, vertex)) {
+                distance.put(vertex, shortestDistance(node, distance) + getDistance(node, vertex));
+                predecessors.put(vertex, node);
+                unsettled.add(vertex);
             }
         }
     }
@@ -385,26 +383,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             if (minimum == null) {
                 minimum = vertex;
             } else {
-                if (shortestDistance(vertex) < shortestDistance(minimum)) {
+                if (shortestDistance(vertex, distance) < shortestDistance(minimum, distance)) {
                     minimum = vertex;
                 }
             }
         }
         return minimum;
-    }
-
-    /**
-     * 
-     * @param destination
-     * @return
-     */
-    private int shortestDistance(V destination) {
-        Integer i = this.distance.get(destination);
-        if (i == null) {
-            return Integer.MAX_VALUE;
-        } else {
-            return i;
-        }
     }
 
 
@@ -431,11 +415,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param range the radius of the search.
      * @return a set of vertices that are within range of v (this set does not contain v).
      */
-    @Override
-    public Set<V> search(V v, int range){
-        return null;
-    }
-    /*
+
     @Override
     public Set<V> search(V v, int range) {
        Set<V> vSet = allVertices();
@@ -473,7 +453,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 /*
 
     }
-    */
+
 
     /**
      * Compute the diameter of the graph.
@@ -485,11 +465,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @return the diameter of the graph.
      */
-    @Override
-    public int diameter(){
-        return 0;
-    }
-    /*
+
     @Override
     public int diameter() {
         Set<V> vSet1 = allVertices();
@@ -509,8 +485,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         }
         return longLength;
     }
-
-     */
+    
     /**
      * Find the edge that connects two vertices if such an edge exists.
      * This method should not permit graph mutations.
