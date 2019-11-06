@@ -332,8 +332,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         V vertex1;
         V vertex2;
 
-
-
         for (V vertex : allVertices) {
             vertices.add(vertex);
         }
@@ -496,11 +494,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @return the diameter of the graph.
      */
-    @Override
-    public int diameter(){
-        return 0;
-    }
-    /*
+
     @Override
     public int diameter() {
         Set<V> vSet1 = allVertices();
@@ -520,8 +514,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         }
         return longLength;
     }
-
-     */
+    
     /**
      * Find the edge that connects two vertices if such an edge exists.
      * This method should not permit graph mutations.
