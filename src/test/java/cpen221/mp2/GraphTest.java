@@ -292,7 +292,7 @@ public class GraphTest {
         assertEquals(expected, MSP);
     }
 
-    /*
+
     @Test
     public void testSearch1(){
         Vertex v1 = new Vertex(1, "Jake Peralta");
@@ -329,7 +329,9 @@ public class GraphTest {
         vSet.add(v4);
         assertEquals(vSet, graph.search(v1, 6));
     }
+
      */
+
 
 
     @Test
@@ -676,6 +678,8 @@ public class GraphTest {
         int shortestPath = g.pathLength(shortestVertices);
         assertEquals(4, shortestPath);
     }
+
+
 
     @Test      
     public void testShortestPath2(){
