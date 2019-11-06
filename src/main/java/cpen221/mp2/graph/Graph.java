@@ -222,42 +222,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
     /**
      *
-     * @param node
-     */
-
-    public void minDistance(V node, Map<V, Integer> distance, Set<V> settled, Set<V> unsettled, Map<V, V> predecessors) {
-        Map<V, E> neighbours = getNeighbours(node);
-        Set<V> neighbourNodes = neighbours.keySet();
-        for (V vertex : neighbourNodes) {
-            if (shortestDistance(vertex, distance) > shortestDistance(node, distance) + edgeLength(node, vertex)) {
-                distance.put(vertex, shortestDistance(node, distance) + edgeLength(node, vertex));
-                predecessors.put(vertex, node);
-                unsettled.add(vertex);
-            }
-        }
-    }
-
-    /**
-     *
-     * @param vertices
-     * @return
-     */
-    private V getMin(Set<V> vertices, Map<V, Integer> distance) {
-        V minimum = null;
-        for (V vertex : vertices) {
-            if (minimum == null) {
-                minimum = vertex;
-            } else {
-                if (shortestDistance(vertex, distance) < shortestDistance(minimum, distance)) {
-                    minimum = vertex;
-                }
-            }
-        }
-        return minimum;
-    }
-
-    /**
-     *
      * @param destination
      * @return
      */
@@ -591,13 +555,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
                 this.e = e;
             }
         }
-        /* Visited Nodes */
+        // Visited Nodes
         Set<V> visited = new HashSet<>();
-        /* Nodes to visit and the cpen221.mp2.graph.Edge used to reach them */
+        // Nodes to visit and the cpen221.mp2.graph.Edge used to reach them
         Deque<VEPair> stack = new LinkedList<VEPair>();
-        /* Edges that could be removed */
+        // Edges that could be removed
         ArrayList<E> candidates = new ArrayList<>();
-        /* Edges that must be kept to maintain connectivity */
+        // Edges that must be kept to maintain connectivity
         Set<E> keep = new HashSet<>();
 
         V start = null;
