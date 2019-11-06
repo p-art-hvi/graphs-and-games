@@ -811,7 +811,6 @@ public class GraphTest {
         assertEquals(16, shortestPath);
     }
 
-    /*
     @Test
     public void testDiameter1(){
         Vertex v1 = new Vertex(1, "Stir fry");
@@ -836,10 +835,9 @@ public class GraphTest {
         g.addEdge(e3);
         g.addEdge(e4);
 
-        assertEquals(40, g.diameter());
+        assertEquals(41, g.diameter());
     }
-*/
-/*
+
     @Test
     public void testDiameter2(){
         Vertex v1 = new Vertex(1, "Gamora");
@@ -868,7 +866,6 @@ public class GraphTest {
         g.addEdge(e5);
         g.addEdge(e6);
 
-        assertEquals(550, g.diameter());
+        assertEquals(500, g.diameter());
     }
- */
 }

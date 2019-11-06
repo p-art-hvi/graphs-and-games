@@ -498,6 +498,36 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public int diameter() {
         Set<V> vSet1 = allVertices();
+        List<V> vList1 = new ArrayList<>(vSet1);
+        Set<V> vSet2 = allVertices();
+        List<V> vList2 = new ArrayList<>(vSet2);
+        int tempLength = 0;
+        int diameter = 0;
+
+        for (V v1 : vList1) {
+            List<V> shortList;
+            Map<V, List<V>> shortMap = shortestMap(v1);
+            for (V v2 : vList2) {
+                if (v1 != v2) {
+                    if(getEdge(v1, v2) != null){
+                        E e = getEdge(v1, v2);
+                        tempLength = e.length();
+                    } else{
+                        shortList = shortMap.get(v2);
+                        if(shortList != null){
+                            tempLength = pathLength(shortList);
+                        }
+                    }
+                    if (tempLength > diameter) {
+                        diameter = tempLength;
+                    }
+                }
+            }
+        }
+        return diameter;
+    }
+        /*
+        Set<V> vSet1 = allVertices();
         Set<V> vSet2;
         int length;
         int longLength = 0;
@@ -513,7 +543,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             }
         }
         return longLength;
-    }
+         */
     
     /**
      * Find the edge that connects two vertices if such an edge exists.
