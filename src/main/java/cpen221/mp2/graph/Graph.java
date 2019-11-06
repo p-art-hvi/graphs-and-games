@@ -279,13 +279,41 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public List<V> shortestPath(V source, V sink) {
-        return shortest;
+        Map<V, List<V>> allPaths = shortestMap(source);
+        return allPaths.get(sink);
     }
 
-        /*if (predecessors.get(target) == null) {
-            return null;
+    public Map<V, List<V>> shortestMap (V source){
+        Map<V, Integer> distance = new HashMap<>();
+        List<V> settled = new ArrayList<>();
+        List<V> unsettled = new ArrayList<>();
+        Map<V, V> predecessors = new HashMap<>();
+        Map<V, List<V>> allPaths = new HashMap<>();
+
+        distance.put(source, 0);
+        unsettled.add(source);
+
+        while (unsettled.size() > 0){
+            V node = getMin(unsettled, distance);
+            settled.add(node);
+            unsettled.remove(node);
+            minDistance(node, distance, settled, unsettled, predecessors);
         }
-*/
+
+        for(int i=0; i < settled.size(); i++){
+            List<V> path = new ArrayList<>();
+            V target = settled.get(i);
+            V initial = settled.get(i);
+            path.add(target);
+            while (predecessors.get(target) != null) {
+                target = predecessors.get(target);
+                path.add(target);
+            }
+            Collections.reverse(path);
+            allPaths.put(initial, path);
+        }
+        return allPaths;
+    }
 
     /**
      * Compute the minimum spanning tree of the graph.
@@ -342,21 +370,19 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         return minEdge;
     }
 
-    /**
-     *
-     * @param node
-     */
-    public void minDistance(V node) {
+    public void minDistance(V node, Map<V, Integer> distance, List<V> settled,List<V> unsettled, Map<V, V> predecessors) {
+
         Map<V, E> neighbours = getNeighbours(node);
         Set<V> neighbourNodes = neighbours.keySet();
         for (V vertex : neighbourNodes) {
-            if (shortestDistance(vertex) > shortestDistance(node) + getDistance(node, vertex)) {
-                this.distance.put(vertex, shortestDistance(node) + getDistance(node, vertex));
-                this.predecessors.put(vertex, node);
-                this.unsettled.add(vertex);
+            if (shortestDistance(vertex, distance) > shortestDistance(node, distance) + getDistance(node, vertex)) {
+                distance.put(vertex, shortestDistance(node, distance) + getDistance(node, vertex));
+                predecessors.put(vertex, node);
+                unsettled.add(vertex);
             }
         }
     }
+
 
     /**
      *
@@ -379,32 +405,20 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param vertices
      * @return
      */
-    private V getMin(Set<V> vertices) {
+    private V getMin(List<V> vertices, Map<V, Integer> distance) {
+
+
         V minimum = null;
         for (V vertex : vertices) {
             if (minimum == null) {
                 minimum = vertex;
             } else {
-                if (shortestDistance(vertex) < shortestDistance(minimum)) {
+                if (shortestDistance(vertex, distance) < shortestDistance(minimum, distance)) {
                     minimum = vertex;
                 }
             }
         }
         return minimum;
-    }
-
-    /**
-     * 
-     * @param destination
-     * @return
-     */
-    private int shortestDistance(V destination) {
-        Integer i = this.distance.get(destination);
-        if (i == null) {
-            return Integer.MAX_VALUE;
-        } else {
-            return i;
-        }
     }
 
 
@@ -431,49 +445,46 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param range the radius of the search.
      * @return a set of vertices that are within range of v (this set does not contain v).
      */
-    @Override
-    public Set<V> search(V v, int range){
-        return null;
-    }
-    /*
+
     @Override
     public Set<V> search(V v, int range) {
-       Set<V> vSet = allVertices();
-       Set<V> reached = new HashSet<>();
-       Map<V, List<V>> map = new HashMap<>();
-       List<V> path;
-       Map<V, Integer> lengthMap = new HashMap<>();
-       int length;
-       List<V> vList = new CopyOnWriteArrayList<>(vSet);
+        Set<V> vSet = allVertices();
+        Set<V> reached = new HashSet<>();
+        Map<V, List<V>> map = new HashMap<>();
+        List<V> path;
+        Map<V, Integer> lengthMap = new HashMap<>();
+        int length;
+        List<V> vList = new CopyOnWriteArrayList<>(vSet);
+        Map<V, List<V>> shortestMap = shortestMap(v);
 
 
-      for (V vertex: vList) {
-           List<V> shortest = shortestPath(v, vertex);
-           if (shortest != null) {
-               map.put(vertex, shortest);
-           }
-       }
-       for (V vertex: map.keySet()) {
-           path = map.get(vertex);
-           length = 0;
-           for (int i = 0; i < path.size() - 1; i++) {
-               length += edgeLength(path.get(i), path.get(i + 1));
-           }
-           lengthMap.put(vertex, length);
-       }
-       for (V vertex: lengthMap.keySet()) {
-           if (lengthMap.get(vertex) <= range && lengthMap.get(vertex) != 0) {
-               reached.add(vertex);
-           }
-       }
+        for (V vertex : vList) {
 
-       return reached;
+            List<V> shortest = shortestMap.get(vertex);
+            if (shortest != null) {
+                map.put(vertex, shortest);
+            }
+        }
+        for (V vertex : map.keySet()) {
+            path = map.get(vertex);
+            length = 0;
+            for (int i = 0; i < path.size() - 1; i++) {
+                length += edgeLength(path.get(i), path.get(i + 1));
+            }
+            lengthMap.put(vertex, length);
+        }
+        for (V vertex : lengthMap.keySet()) {
+            if (lengthMap.get(vertex) <= range && lengthMap.get(vertex) != 0) {
+                reached.add(vertex);
+            }
+        }
 
-        return visited; */
+        return reached;
+    }
 /*
 
     }
-    */
+
 
     /**
      * Compute the diameter of the graph.
