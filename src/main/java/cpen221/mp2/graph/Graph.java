@@ -439,15 +439,23 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public int diameter() {
-        Set<V> vSet1 = allVertices();
-        Set<V> vSet2;
+        List<V> vList1 = new ArrayList<>();
+        List<V> vList2 = new ArrayList<>();
         int length;
         int longLength = 0;
-        for(V v1: vSet1){
+
+        for (V vertex: allVertices()) {
+            vList1.add(vertex);
+        }
+
+        for(V v1: vList1){
+            Map<V, List<V>> shortestMap = shortestMap(v1);
             List<V> shortList;
-            vSet2 = getNeighbours(v1).keySet();
-            for(V v2: vSet2){
-                shortList = shortestPath(v1, v2);
+            for (V vertex: getNeighbours(v1).keySet()) {
+                vList2.add(vertex);
+            }
+            for(V v2: vList2){
+                shortList = shortestMap.get(v2);
                 length = pathLength(shortList);
                 if(length > longLength){
                     longLength = length;
