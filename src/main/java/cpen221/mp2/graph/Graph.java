@@ -13,21 +13,22 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     Rep Invariant:
     -- each map pairing contains a vertex which is on the graph and a list
     of vertices which it shares edges with
-    -- each vertex in the graph must be added with addVertex()
-    -- each edge in the graph must be added with addEdge()
     -- each edge must correspond to two vertices on the graph
-    -- all vertices must have at least one edge connecting them to the graph
+    -- each vertex in the graph must have a unique id
 
     Abstraction Function:
     -- graph maps all vertices on a graph to a list of vertices
     they attach to (have edges with)
     -- edgeList represents a list containing all edges in the given map
     -- vertexList represents a list containing all vertices in a given map
-     */
+    */
+
     private final Map<V, Set<V>> graph = new HashMap<>();
     private final Set<E> edgeList = new HashSet<>();
     private final Set<V> vertexList = new HashSet<>();
 
+    public Graph() {
+    }
     /**
      * Add a vertex to the graph
      *
@@ -59,6 +60,26 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public boolean addEdge(E e) {
+
+       /* if (this.graph.containsKey(v1)) {
+            Set<V> seta = this.graph.get(v1);
+            seta.add(v2);
+            this.graph.put(v1, seta);
+        } else {
+            Set <V> set1 = new HashSet<>();
+            set1.add(v2);
+            this.graph.put(v1, set1);
+        }
+        if (graph.containsKey(v2)) {
+            Set<V> setb = this.graph.get(v2);
+            setb.add(v1);
+            this.graph.put(v2, setb);
+        } else {
+            Set <V> set2 = new HashSet<>();
+            set2.add(v1);
+            this.graph.put(v2, set2);
+        } */
+
         V v1 = e.v1();
         V v2 = e.v2();
         this.edgeList.add(e);
@@ -79,7 +100,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public boolean edge(E e) {
         V v1 = e.v1();
         V v2 = e.v2();
-        return this.graph.get(v1).contains(v2) && this.graph.get(v2).contains(v1) && this.edgeList.contains(e);
+        return this.graph.get(v1).contains(v2)
+                && this.graph.get(v2).contains(v1) && this.edgeList.contains(e);
     }
 
     /**
@@ -104,8 +126,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     @Override
     public int edgeLength(V v1, V v2) {
-        for(E edge1: this.edgeList){
-            if(edge1.v1() == v1 && edge1.v2() == v2 || edge1.v1() == v2 && edge1.v2() == v1){
+        for (E edge1: this.edgeList) {
+            if (edge1.v1() == v1 && edge1.v2() == v2 || edge1.v1() == v2 && edge1.v2() == v1) {
                 return edge1.length();
             }
         }
@@ -139,7 +161,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         this.graph.get(v1).remove(v2);
         this.graph.get(v2).remove(v1);
         this.edgeList.remove(e);
-        return (!this.graph.get(v1).contains(v2) && !this.graph.get(v2).contains(v1) && !this.edgeList.contains(e));
+        return (!this.graph.get(v1).contains(v2)
+                && !this.graph.get(v2).contains(v1) && !this.edgeList.contains(e));
     }
 
     /**
@@ -216,8 +239,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         }
         return neighbourMap;
     }
-//**TODO: write specs
-
 
 
     /**
@@ -239,7 +260,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @param source the start vertex
      * @param sink   the end vertex
-     * @return the vertices, in order, on the shortest path from source to sink (both end points are part of the list)
+     * @return the vertices, in order, on the shortest path from source
+     *         to sink (both end points are part of the list)
      */
     @Override
     public List<V> shortestPath(V source, V sink) {
@@ -247,7 +269,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         return allPaths.get(sink);
     }
 
-    public Map<V, List<V>> shortestMap (V source){
+    public Map<V, List<V>> shortestMap(V source) {
         Map<V, Integer> distance = new HashMap<>();
         List<V> settled = new ArrayList<>();
         List<V> unsettled = new ArrayList<>();
@@ -257,14 +279,14 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         distance.put(source, 0);
         unsettled.add(source);
 
-        while (unsettled.size() > 0){
+        while (unsettled.size() > 0) {
             V node = getMin(unsettled, distance);
             settled.add(node);
             unsettled.remove(node);
-            minDistance(node, distance, settled, unsettled, predecessors);
+            minDistance(node, distance, unsettled, predecessors);
         }
 
-        for(int i=0; i < settled.size(); i++){
+        for (int i = 0; i < settled.size(); i++) {
             List<V> path = new ArrayList<>();
             V target = settled.get(i);
             V initial = settled.get(i);
@@ -291,7 +313,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         Set<E> edges = allEdges();
         Set<V> allVertices = allVertices();
 
-        List <E> MST = new ArrayList<>();
+        List<E> mst = new ArrayList<>();
         E edge;
         V vertex1;
         V vertex2;
@@ -306,15 +328,13 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             vertex1 = edge.v1();
             vertex2 = edge.v2();
             if (vertices.find(vertex1) != vertices.find(vertex2)) {
-                MST.add(edge);
+                mst.add(edge);
                 vertices.merge(vertex1, vertex2);
             }
-
         }
 
-        return MST;
+        return mst;
     }
-//** TODO: write specs
 
     /**
      * @param edges
@@ -332,12 +352,14 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         return minEdge;
     }
 
-    public void minDistance(V node, Map<V, Integer> distance, List<V> settled,List<V> unsettled, Map<V, V> predecessors) {
+    public void minDistance(V node, Map<V, Integer> distance,
+                            List<V> unsettled, Map<V, V> predecessors) {
 
         Map<V, E> neighbours = getNeighbours(node);
         Set<V> neighbourNodes = neighbours.keySet();
         for (V vertex : neighbourNodes) {
-            if (shortestDistance(vertex, distance) > shortestDistance(node, distance) + getDistance(node, vertex)) {
+            if (shortestDistance(vertex, distance) > shortestDistance(node, distance)
+                    + getDistance(node, vertex)) {
                 distance.put(vertex, shortestDistance(node, distance) + getDistance(node, vertex));
                 predecessors.put(vertex, node);
                 unsettled.add(vertex);
@@ -369,7 +391,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      */
     private V getMin(List<V> vertices, Map<V, Integer> distance) {
 
-
         V minimum = null;
         for (V vertex : vertices) {
             if (minimum == null) {
@@ -394,7 +415,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     public int pathLength(List<V> path) {
         int length = 0;
         E edge;
-        for(int i = 0; i < path.size() - 1; i++){
+        for (int i = 0; i < path.size() - 1; i++) {
             edge = getEdge(path.get(i), path.get(i + 1));
             length += edge.length();
         }
@@ -443,9 +464,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
         return reached;
     }
-/*
 
-    }
 
 
     /**
@@ -473,12 +492,12 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
             Map<V, List<V>> shortMap = shortestMap(v1);
             for (V v2 : vList2) {
                 if (v1 != v2) {
-                    if(getEdge(v1, v2) != null){
+                    if (getEdge(v1, v2) != null) {
                         E e = getEdge(v1, v2);
                         tempLength = e.length();
-                    } else{
+                    } else {
                         shortList = shortMap.get(v2);
-                        if(shortList != null){
+                        if (shortList != null) {
                             tempLength = pathLength(shortList);
                         }
                     }
@@ -490,25 +509,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         }
         return diameter;
     }
-        /*
-        Set<V> vSet1 = allVertices();
-        Set<V> vSet2;
-        int length;
-        int longLength = 0;
-        for(V v1: vSet1){
-            List<V> shortList;
-            vSet2 = getNeighbours(v1).keySet();
-            for(V v2: vSet2){
-                shortList = shortestPath(v1, v2);
-                length = pathLength(shortList);
-                if(length > longLength){
-                    longLength = length;
-                }
-            }
-        }
-        return longLength;
-         */
     
+
     /**
      * Find the edge that connects two vertices if such an edge exists.
      * This method should not permit graph mutations.
@@ -520,9 +522,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     @Override
     public E getEdge(V v1, V v2) {
         E edge2 = null;
-        Set<E> edgeList = new HashSet<>(this.edgeList);
-        for(E edge1: edgeList){
-            if((edge1.v1() == v1 && edge1.v2() == v2) || (edge1.v1() == v2 && edge1.v2() == v1)){
+        Set<E> edges = new HashSet<>(this.edgeList);
+        for (E edge1: edges) {
+            if ((edge1.v1() == v1 && edge1.v2() == v2) || (edge1.v1() == v2 && edge1.v2() == v1)) {
                 edge2 = edge1;
             }
         }
