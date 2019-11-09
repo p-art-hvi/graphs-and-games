@@ -29,6 +29,12 @@ public class Vertex {
         this.name = name;
     }
 
+    /**
+     * Find out whether the two vertex objects are equal to each other.
+     *
+     * @param o is the vertex object you want to compare the vertex to
+     * @return true if the object equals the vertex object, otherwise return false
+     */
     @Override
     public boolean equals(Object o) {
         if (o instanceof Vertex) {
@@ -40,11 +46,20 @@ public class Vertex {
         return false;
     }
 
+    /**
+     * Obtain a unique integer for the vertex object
+     *
+     * @return the vertex object's hashcode
+     */
     @Override
     public int hashCode() {
         return name.hashCode() + id;
     }
 
+    /**
+     * Obtain the id of the vertex
+     * @return the vertex id
+     */
     public int id() {
         return id;
     }
@@ -66,8 +81,5 @@ public class Vertex {
     public void updateName(String name) {
         this.name = name;
     }
-
-    //// --- any new methods, if necessary, go below this link --- ////
-
 
 }
