@@ -5,6 +5,16 @@ package cpen221.mp2.graph;
  * No two vertices in the same graph should have the same id.
  */
 public class Vertex {
+ /*
+    Rep Invariant:
+    -- each vertex must not be null
+
+    Abstraction Function:
+    -- id is the value which represents the vertex
+       each vertex has a unique id
+    -- name is used to identify a vertex
+    */
+
     private final int id;
     private String name;
 

@@ -3,6 +3,18 @@ package cpen221.mp2.graph;
 import java.util.NoSuchElementException;
 
 public class Edge<V extends Vertex> {
+     /*
+    Rep Invariant:
+    -- each edge must be composed of two distinct vertices
+    -- each edge must contain a weight which is the length between the two vertices it connects
+
+    Abstraction Function:
+    -- v1 is a vertex which the edge is attached to
+    -- v2 is another vertex which the edge is attached to
+       v2 cannot equal v1
+    -- length is the distance between v1 and v2
+       length must be greater than 0
+    */
 
     private V v1;
     private V v2;

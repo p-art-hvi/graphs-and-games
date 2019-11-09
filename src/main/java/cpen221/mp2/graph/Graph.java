@@ -20,12 +20,10 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     Abstraction Function:
     -- graph maps all vertices on a graph to a set of vertices
        they attach to (have edges with)
-    -- edgeSet represents a set containing all edges in the given map
-        edgeSet cannot contain edges not connected to vertices, edges
-        cannot be connected to null vertices.
-    -- vertexSet represents a set containing all vertices in a given map
-        vertexSet cannot contain vertices which are not connected to any
-        other vertices in graph. vertexSet cannot contain null values or duplicates.
+    -- edgeSet represents a set containing all edges in the given map.
+       edgeSet cannot contain null values or duplicates.
+    -- vertexSet represents a set containing all vertices in a given map.
+       vertexSet cannot contain null values or duplicates.
     */
 
     private final Map<V, Set<V>> graph = new HashMap<>();
@@ -54,7 +52,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * Check if a vertex is part of the graph
      *
      * @param v vertex to check in the graph
-     * requires: v cannot be null as the graph does not contain null values
      * @return true of v is part of the graph and false otherwise
      */
     @Override
@@ -66,8 +63,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * Add an edge to the graph
      *
      * @param e the edge to add to the graph
-     * requires: the edge must have two vertices that are not equal to each other
-     *           and are not null values.
+     * requires: the edge must have two vertices that are not equal to each other.
      * @return true if the edge was successfully added and false otherwise
      *
      */
@@ -90,8 +86,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * in the edgeSet.
      *
      * @param e the edge to check in the graph
-     * requires: e cannot be a null value,
-     *           v1 and v2 cannot be null either.
      * @return true if e is an edge in the graph and false otherwise
      */
     @Override
@@ -108,7 +102,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param v1 the first vertex of the edge
      * @param v2 the second vertex of the edge
      * requires: v1 cannot equal v2
-     *           v1 and/or v2 cannot be null values
      * @return true of the v1-v2 edge is part of the graph and false otherwise
      */
 
@@ -123,7 +116,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param v1 the first vertex of the edge
      * @param v2 the second vertex of the edge
      * requires: v1 cannot equal v2
-     *           v1 and/or v2 cannot be null values
      * @return the length of the v1-v2 edge if this edge is part of the graph
      *          otherwise return the length of 0, indicating that the edge
      *          is not a part of the graph.
@@ -198,8 +190,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * Access to this set should not permit graph mutations.
      *
      * @return a set of all vertices belonging to the graph.
-     *          The set cannot contain duplicate vertices or
-     *          vertices of null value.
+     *
      */
     @Override
     public Set<V> allVertices() {
@@ -212,13 +203,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * Access to this set should not permit graph mutations.
      *
      * @param v the vertex of interest
-     * requires: v cannot be null.
      * @return all edges incident on v
      *         the set of incident edges can be empty only if the graph
      *         is made of a single edge with two vertices.
      *         If the graph is made up of more than 1 edge, the set of
      *         incident edges must contain more than one element.
-     *         Cannot return a set of null values.
      */
     @Override
     public Set<E> allEdges(V v) {
@@ -250,7 +239,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * Access to this map should not permit graph mutations.
      *
      * @param v is the vertex whose neighbourhood we want.
-     * requies: v cannot be null
      * @return a map containing each vertex w that neighbors v and the edge between v and w.
      *          the map cannot contain vertex v that is being passed as a parameter
      *          since edge v-v does not exist.
@@ -279,7 +267,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      *
      * @param destination a vertex which is contained in the keySet of
      *                    the map named distance.
-     * requires: It cannot be a null value.
      * @param distance is a map containing destination vertices and their
      *                 corresponding integer values which describe the length
      *                 of the path to get to the destination.
@@ -300,7 +287,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * Computes the shortest path from source to sink
      *
      * @param source the start vertex
-     * requies: needs to be connected to an edge within the graph.
+     * requires: needs to be connected to an edge within the graph.
      * @param sink   the end vertex
      * requires: needs to be connected to an edge within the graph.
      * @return the vertices, in order, on the shortest path from source
@@ -314,8 +301,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     }
 
     /**
-     *
-     *
      * @param source is the vertex which we want to start from.
      * requires: needs to be contained in the graph and connected to at least one other vertex by an edge.
      * @return a map containing each vertex and a list of vertices which it connects to.
@@ -388,8 +373,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
     }
 
     /**
-     * @param edges
-     * @return
+     * @param edges a set of edges which have not yet been added to the msp
+     * @return edge in edges with the smallest weight (distance)
      */
     public E minWeight(Set<E> edges) {
         int min = Integer.MAX_VALUE;
@@ -405,10 +390,14 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
     /**
      *
-     * @param node
-     * @param distance
-     * @param unsettled
-     * @param predecessors
+     * @param node start vertex
+     * @param distance is a map containing destination vertices and their
+     *      *          corresponding integer values which describe the length
+     *      *          of the path to get to the destination.
+     * @param unsettled is a list of vertices which have not yet been added
+     *                  to the shortestMap
+     * @param predecessors maps the vertex closest to the node to the node
+     *                     being searched for
      */
     public void minDistance(V node, Map<V, Integer> distance,
                             List<V> unsettled, Map<V, V> predecessors) {
@@ -417,8 +406,8 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
         Set<V> neighbourNodes = neighbours.keySet();
         for (V vertex : neighbourNodes) {
             if (shortestDistance(vertex, distance) > shortestDistance(node, distance)
-                    + getDistance(node, vertex)) {
-                distance.put(vertex, shortestDistance(node, distance) + getDistance(node, vertex));
+                    + edgeLength(node, vertex)) {
+                distance.put(vertex, shortestDistance(node, distance) + edgeLength(node, vertex));
                 predecessors.put(vertex, node);
                 unsettled.add(vertex);
             }
@@ -427,27 +416,14 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
 
 
     /**
-     *
-     * @param node
-     * @param target
-     * @return
-     */
-    private int getDistance(V node, V target) {
-        for (Edge edge : this.edgeSet) {
-            if (edge.v1().equals(node)
-                    && edge.v2().equals(target)) {
-                return edge.length();
-            }
-        }
-        return 0;
-    }
-
-    /**
      * Find the vertex in the map which has the smallest distance to the source
      * vertex.
      *
      * @param vertices is a list of vertices in which we need to find the vertex
      *                 that corresponds to the smallest integer distance in the map.
+     * @param distance is a map containing destination vertices and their
+     *                 corresponding integer values which describe the length
+     *                 of the path to get to the destination.
      * requires: at least one vertex in the list vertices is contained within
      *           the keySet of the map called distance.
      * @return a vertex of type V where V is the vertex corresponding with the
@@ -473,7 +449,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * Compute the length of a given path
      *
      * @param path indicates the vertices on the given path
-     * requires: path list cannot contain null values.
      * @return the length of path where the length is greater than
      *         or equal to 0.
      *         the length of the path can only equal 0 if the
@@ -495,7 +470,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param v     the vertex to start the search from.
      * requires: v is a part of the graph and connected to edges.
      * @param range the radius or path distance of the search.
-     * requires: range is greater than or equal to 0.
      * @return a set of vertices that are within range of v (this set does not contain v).
      *          the set returned can only be empty with range is less than the shortest edge
      *          length between v and its closest, adjacent vertex.
@@ -590,7 +564,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements ImGraph<V, E>
      * @param v1 one end of the edge
      * @param v2 the other end of the edge
      * requires: v1 is not equal to v2
-     *           v1 and/or v2 are not null values
      * @return the edge connecting v1 and v2 or return null if no such edge exists
      */
     @Override
